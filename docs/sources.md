@@ -67,7 +67,7 @@ How the page gets data: browser calls Vista OCAPI `https://vwc.ucicinemas.pt/WSV
 - We do not solve/evade the challenge (no stealth plugins, no UA spoofing, no headed-browser tricks). `scraper/src/sources/uci.ts` detects the wall and fails the source cleanly → UCI cinemas show a venue link + "horários no site da UCI".
 - UBBO slug `/cinemas/ubbo/` and its siteId are still **unverified** (page unreachable to us).
 
-**Update 25 Nov 2026 — reachable from GitHub Actions:** the same honest headless visit, from the Actions runner, loads both cinema pages with no challenge (first CI run, 2.7 s; no Turnstile, no Queue-it). My earlier guess ("same or worse") was wrong. The scraper now logs status, final URL, title and visible text (never raw HTML — it embeds UCI's API token; CI logs are public). Next: write the parser against that visible content, as a normal visitor's page. Still no token reuse.
+**Update 25 Nov 2026 — also blocked from GitHub Actions:** the honest headless visit from the Actions runner gets HTTP 403 "Attention Required! | Cloudflare — Sorry, you have been blocked" on both pages (the first CI run looked like a load because the detector didn't know this page; fixed). UCI is unreachable to us without evasion → venue link + "sem horários". The only legitimate route left: ask UCI (the block page itself says to contact the site owner).
 
 ---
 

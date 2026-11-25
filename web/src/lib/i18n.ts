@@ -25,6 +25,11 @@ const dict = {
     sessionsAt: (cinema: string) => `Sessões em ${cinema}`,
     footer: (ago: string) => `Programação das salas, atualizada ${ago}.`,
     credits: "Dados de filmes: TMDB (sem endosso do TMDB). Classificações IMDb via OMDb.",
+    moreAbout: "Sobre o filme", cinemaPage: "Site do cinema",
+    installTitle: "Leve a eden no telemóvel",
+    installIos: "Toque em Partilhar e depois em «Adicionar ao ecrã principal».",
+    installAndroid: "Instale a app: abre como uma app, sem browser.",
+    install: "Adicionar ao ecrã principal", notNow: "Agora não", loadingShort: "A abrir a sala…",
   },
   en: {
     today: "Today", week: "Week", commercial: "Commercial", arthouse: "Arthouse",
@@ -47,6 +52,11 @@ const dict = {
     sessionsAt: (cinema: string) => `Sessions at ${cinema}`,
     footer: (ago: string) => `Cinema programmes, updated ${ago}.`,
     credits: "Film data: TMDB (not endorsed or certified by TMDB). IMDb ratings via OMDb.",
+    moreAbout: "About the film", cinemaPage: "Cinema's page",
+    installTitle: "Keep eden on your phone",
+    installIos: "Tap Share, then “Add to Home Screen”.",
+    installAndroid: "Install the app: it opens like an app, no browser.",
+    install: "Add to Home Screen", notNow: "Not now", loadingShort: "Opening the sala…",
   },
 } as const;
 

@@ -23,7 +23,7 @@ export function Poster({ film, width = 92, eager = false }: { film: Film; width?
 }
 
 /** Card: poster, title (PT + original), year, runtime, IMDb, next session chips. Tap → film sheet. */
-export function FilmCard({ film, sessions, onOpen, eager = false }: { film: Film; sessions: Session[]; onOpen: () => void; eager?: boolean }) {
+export function FilmCard({ film, sessions, onOpen, eager = false, showCinema = true }: { film: Film; sessions: Session[]; onOpen: () => void; eager?: boolean; showCinema?: boolean }) {
   const shown = sessions.length > VISIBLE + 1 ? sessions.slice(0, VISIBLE) : sessions;
   return (
     <article className="film">
@@ -37,7 +37,7 @@ export function FilmCard({ film, sessions, onOpen, eager = false }: { film: Film
         </div>
       </div>
       <div className="chips">
-        {shown.map((s) => <Chip key={s.id} s={s} badge />)}
+        {shown.map((s) => <Chip key={s.id} s={s} badge={showCinema} showCinema={showCinema} />)}
         {shown.length < sessions.length && <MoreChip n={sessions.length - shown.length} onOpen={onOpen} />}
       </div>
     </article>

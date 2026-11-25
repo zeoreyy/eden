@@ -11,14 +11,15 @@ export const isArthouse = (s: Session) => CINEMA_BY_ID.get(s.cinemaId)?.kind ===
  * Films showing on `date`, top picks first (in their order), then by next session time (spec).
  * When `now` is given (Hoje), past sessions are hidden and films with none left drop out.
  */
-export function filmsOnDay(p: Programme, films: Map<string, Film>, date: string, now?: number): FilmDay[] {
+export function filmsOnDay(p: Programme, films: Map<string, Film>, date: string, now?: number, cinemaId?: string): FilmDay[] {
   const byFilm = new Map<string, Session[]>();
   for (const s of p.sessions) {
-    if (s.programmeDate !== date) continue;
+    if (s.programmeDate !== date || (cinemaId && s.cinemaId !== cinemaId)) continue;
     if (now != null && Date.parse(s.startsAt) <= now) continue;
     (byFilm.get(s.filmKey) ?? byFilm.set(s.filmKey, []).get(s.filmKey)!).push(s);
   }
-  const picks = p.topPicks[date] ?? [];
+  // A cinema's own page is chronological; the city-wide list puts top picks first (spec).
+  const picks = cinemaId ? [] : p.topPicks[date] ?? [];
   const rank = (k: string) => (picks.includes(k) ? picks.indexOf(k) : Infinity);
   return [...byFilm]
     .flatMap(([key, sessions]) => {

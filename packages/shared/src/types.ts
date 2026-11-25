@@ -29,6 +29,8 @@ export interface Film {
   imdbId?: string;
   imdb?: number;
   letterboxdUrl?: string;
+  /** The film's page on a cinema's own site (as scraped; never built). */
+  pageUrl?: string;
 }
 
 export interface Session {

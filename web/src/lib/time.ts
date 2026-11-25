@@ -30,6 +30,12 @@ export function longDate(date: string, lang: Lang): string {
   return lang === "pt" ? s.replace("-feira", "") : s.replace(",", "");
 }
 
+/** "Sábado" / "Saturday" */
+export function weekdayLong(date: string, lang: Lang): string {
+  const s = new Intl.DateTimeFormat(locale(lang), { weekday: "long", timeZone: "UTC" }).format(noon(date)).replace("-feira", "");
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 export function dayOfMonth(date: string): number {
   return Number(date.slice(8, 10));
 }

@@ -41,13 +41,13 @@ export function useOnline(): boolean {
   );
 }
 
-// ── Router: /, /semana, /comercial[/<cinema>], /autor[/<cinema>]; ?filme=<key> opens the film sheet ──
-export type Tab = "hoje" | "semana" | "comercial" | "autor";
+// ── Router: / (week, today selected), /comercial[/<cinema>], /autor[/<cinema>]; ?dia= day, ?filme= film sheet ──
+export type Tab = "semana" | "comercial" | "autor";
 export interface Route { tab: Tab; cinemaId?: string; film?: string; day?: string }
 
 export function parseRoute(loc: Location = location): Route {
   const [first, second] = loc.pathname.split("/").filter(Boolean);
-  const tab: Tab = first === "semana" || first === "comercial" || first === "autor" ? first : "hoje";
+  const tab: Tab = first === "comercial" || first === "autor" ? first : "semana"; // old /semana links land home
   const q = new URLSearchParams(loc.search);
   const film = q.get("filme") ?? undefined;
   const day = /^\d{4}-\d{2}-\d{2}$/.test(q.get("dia") ?? "") ? q.get("dia")! : undefined;
@@ -55,7 +55,7 @@ export function parseRoute(loc: Location = location): Route {
 }
 
 export function routeHref(r: Route): string {
-  const path = r.tab === "hoje" ? "/" : `/${r.tab}${r.cinemaId ? `/${encodeURIComponent(r.cinemaId)}` : ""}`;
+  const path = r.tab === "semana" ? "/" : `/${r.tab}${r.cinemaId ? `/${encodeURIComponent(r.cinemaId)}` : ""}`;
   const q = new URLSearchParams();
   if (r.day) q.set("dia", r.day);
   if (r.film) q.set("filme", r.film);
@@ -63,7 +63,7 @@ export function routeHref(r: Route): string {
 }
 
 const listeners = new Set<() => void>();
-let current = typeof location === "undefined" ? { tab: "hoje" as Tab } : parseRoute();
+let current: Route = typeof location === "undefined" ? { tab: "semana" } : parseRoute();
 if (typeof window !== "undefined") addEventListener("popstate", () => { current = parseRoute(); listeners.forEach((l) => l()); });
 
 export function useRoute(): [Route, (r: Route, opts?: { replace?: boolean }) => void] {

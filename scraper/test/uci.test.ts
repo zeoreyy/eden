@@ -12,6 +12,10 @@ describe("UCI", () => {
     expect(detectUciBlock("https://uciportugal.queue-it.net/?c=uciportugal&e=684357", "", "")).toBe("queue-it");
   });
 
+  it("recognises Cloudflare's hard block page (GitHub Actions, 25 Nov 2026)", () => {
+    expect(detectUciBlock("https://www.ucicinemas.pt/cinemas/ubbo/", "Attention Required! | Cloudflare", "<h1>Sorry, you have been blocked</h1>")).toBe("cloudflare-block");
+  });
+
   it("does not flag a normal page", () => {
     expect(detectUciBlock("https://www.ucicinemas.pt/cinemas/el-corte-ingles/", "UCI El Corte Inglés", "<html></html>")).toBeNull();
   });

@@ -22,12 +22,11 @@ Movie-goers in Lisbon — cinephiles and casual viewers, Portuguese and foreigne
 
 Out of scope: Culturgest (almost no film screenings), Cinema City Beloura (not operating), NOS Torres Vedras (outside the AML), Cinema City Leiria, UCI Arrábida.
 
-## Tabs (exactly four)
+## Tabs (exactly three — Hoje merged into Semana, José 25 Nov 2026)
 | PT | EN | Content |
 |---|---|---|
-| Hoje | Today | Every film showing today across all 19 cinemas |
-| Semana | Week | Same, rolling 7 days from today, with a day selector |
-| Comercial | Commercial | List of commercial cinemas → tap one → its day as a chronological timeline, day selector |
+| Semana | Week | Home. Rolling 7 days with a day selector, **today selected by default** (title "Hoje"); every film showing that day across all 19 cinemas |
+| Comercial | Commercial | List of commercial cinemas → tap one → that cinema's day as **film cards** (same as Semana, sessions of that cinema only), day selector |
 | Autor | Arthouse | Same for the 5 arthouse cinemas; cycle labels matter most here |
 
 No other tabs, no "next hour" view, no extra filters.
@@ -35,7 +34,7 @@ No other tabs, no "next hour" view, no extra filters.
 ## Movie card
 Poster · title · original title (if different) · year · runtime · IMDb rating · next session times as small chips.
 Arthouse sessions get a small "Autor" badge in Hoje/Semana.
-Tap card → film sheet with all sessions grouped by day → cinema → time chips. Small link "Ver no Letterboxd" (plain link to the film page/search, no rating).
+Tap card → film sheet with all sessions grouped by day → cinema → time chips, plus **links out to read about the film**: IMDb, Letterboxd, TMDB (synopsis, cast, director, trailer live there) and the cinema's own film page. The app itself still shows no synopsis/cast.
 
 ## Session chip
 Time · cinema short name · room/format when known · one short label (cycle, festival, IMAX, 4DX, VIP…). Tapping opens the official URL (session > film > venue). Never invent URLs.
@@ -44,7 +43,7 @@ Time · cinema short name · room/format when known · one short label (cycle, f
 - **All sessions are shown, any time of day** (arthouse morning sessions included). Ordering never hides anything.
 - Hoje/Semana: **Top picks first**, then everything else by next session time.
 - Top picks = commercial films only. Primary signal: the chains' own featured lists (NOS `getTopMovies` — verify it in Phase 1). Fallback/complement: films showing in the most distinct commercial cinemas between 18:00–23:00 that day (minimum 3 cinemas, max 6 picks). Arthouse is never ranked.
-- Past sessions hidden on Hoje. Sessions after midnight (e.g. 00:30) belong to the previous evening.
+- Past sessions hidden on today. Sessions after midnight (e.g. 00:30) belong to the previous evening.
 
 ## Ratings
 - IMDb rating via OMDb (free key, 1,000/day), cached per film.

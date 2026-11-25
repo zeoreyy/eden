@@ -112,52 +112,50 @@ export function Facade() {
   );
 }
 
-const SEATS = (() => {
+/** The sala's ceiling: vault, the three light strips, the stacked wall lights — fixed at the top of the app. */
+export function SalaCeiling() {
+  return (
+    <svg className="ceiling" viewBox="0 0 390 150" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="c-strip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#fff1dc" /><stop offset="1" stopColor="#fff1dc" stopOpacity="0" /></linearGradient>
+        <radialGradient id="c-glow" cx="50%" cy="0%" r="70%"><stop offset="0" stopColor="#fff1dc" stopOpacity=".14" /><stop offset="1" stopColor="#fff1dc" stopOpacity="0" /></radialGradient>
+        <filter id="c-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
+      </defs>
+      <rect width="390" height="150" fill="url(#c-glow)" />
+      <path d="M0 60 Q195 -30 390 60" fill="none" stroke="#fff1dc" strokeOpacity=".14" />
+      <path d="M0 84 Q195 4 390 84" fill="none" stroke="#fff1dc" strokeOpacity=".07" />
+      <g filter="url(#c-blur)">
+        <path d="M150 0 H160 L190 120 H187 Z" fill="url(#c-strip)" />
+        <path d="M190 0 H200 L196.5 128 H193.5 Z" fill="url(#c-strip)" />
+        <path d="M230 0 H240 L203 120 H200 Z" fill="url(#c-strip)" />
+      </g>
+      <g stroke="#fff1dc" strokeLinecap="round" filter="url(#c-blur)">
+        <path d="M0 74 L104 100" strokeWidth="2.2" strokeOpacity=".8" /><path d="M0 88 L104 108" strokeWidth="1.8" strokeOpacity=".55" /><path d="M0 102 L104 116" strokeWidth="1.4" strokeOpacity=".35" />
+        <path d="M390 74 L286 100" strokeWidth="2.2" strokeOpacity=".8" /><path d="M390 88 L286 108" strokeWidth="1.8" strokeOpacity=".55" /><path d="M390 102 L286 116" strokeWidth="1.4" strokeOpacity=".35" />
+      </g>
+    </svg>
+  );
+}
+
+/** Rows of seat backs seen from behind, aisle in the middle — fixed at the bottom, above the tab bar. */
+const FRONT_SEATS = (() => {
   const d: string[] = [];
-  for (let k = 0; k < 11; k++) {
-    const t = k / 10, y = 184 + 62 * Math.pow(t, 1.3), w = 5 + 9 * t, h = 2.6 + 5 * t, gap = 2 + 1.6 * t;
-    const half = 92 + 120 * t, aisle = 6 + 16 * t;
+  for (let k = 0; k < 5; k++) {
+    const t = k / 4, y = 8 + 74 * Math.pow(t, 1.2), w = 13 + 15 * t, h = 9 + 14 * t, gap = 3 + 2 * t, aisle = 14 + 22 * t;
     for (const side of [-1, 1]) {
-      for (let x = aisle; x + w <= half; x += w + gap) {
+      for (let x = aisle; x < 230; x += w + gap) {
         const cx = 195 + side * (x + w / 2), l = cx - w / 2, r = cx + w / 2, f = (n: number) => n.toFixed(1);
-        d.push(`M${f(l)} ${f(y + h)}V${f(y + h * .45)}Q${f(l)} ${f(y)} ${f(cx)} ${f(y)}Q${f(r)} ${f(y)} ${f(r)} ${f(y + h * .45)}V${f(y + h)}`);
+        d.push(`M${f(l)} ${f(y + h * 1.6)}V${f(y + h * .45)}Q${f(l)} ${f(y)} ${f(cx)} ${f(y)}Q${f(r)} ${f(y)} ${f(r)} ${f(y + h * .45)}V${f(y + h * 1.6)}`);
       }
     }
   }
   return d.join("");
 })();
 
-/** The sala seen from the seats, as a faint backdrop behind page titles (no framed screen — José). */
-export function SalaBackdrop() {
+export function SalaSeats() {
   return (
-    <svg className="sala" viewBox="0 0 390 250" preserveAspectRatio="xMidYMin slice" aria-hidden="true">
-      <defs>
-        <radialGradient id="s-glow" cx="50%" cy="45%" r="55%"><stop offset="0" stopColor="#fff1dc" stopOpacity=".2" /><stop offset="1" stopColor="#fff1dc" stopOpacity="0" /></radialGradient>
-        <linearGradient id="s-strip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#fff1dc" /><stop offset="1" stopColor="#fff1dc" stopOpacity=".25" /></linearGradient>
-        <linearGradient id="s-curtain" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stopColor="#3d1216" /><stop offset=".5" stopColor="#5c1c22" /><stop offset="1" stopColor="#3d1216" /></linearGradient>
-        <filter id="s-blur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4" result="b" /><feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge></filter>
-      </defs>
-      <path d="M0 0 H390 V52 L270 84 H120 L0 52 Z" fill="#1b1714" />
-      <path d="M0 52 Q195 -26 390 52" fill="none" stroke="#fff1dc" strokeOpacity=".12" />
-      <g filter="url(#s-blur)">
-        <path d="M152 0 H162 L190 84 H187 Z" fill="url(#s-strip)" />
-        <path d="M190 0 H200 L196.5 84 H193.5 Z" fill="url(#s-strip)" />
-        <path d="M228 0 H238 L203 84 H200 Z" fill="url(#s-strip)" />
-      </g>
-      <path d="M0 52 L120 84 V178 L0 232 Z" fill="#191512" />
-      <path d="M390 52 L270 84 V178 L390 232 Z" fill="#191512" />
-      <g stroke="#fff1dc" strokeLinecap="round" filter="url(#s-blur)">
-        <path d="M4 74 L112 98" strokeWidth="2.4" /><path d="M4 86 L112 106" strokeWidth="2" strokeOpacity=".8" /><path d="M4 98 L112 114" strokeWidth="1.6" strokeOpacity=".6" />
-        <path d="M386 74 L278 98" strokeWidth="2.4" /><path d="M386 86 L278 106" strokeWidth="2" strokeOpacity=".8" /><path d="M386 98 L278 114" strokeWidth="1.6" strokeOpacity=".6" />
-      </g>
-      <g fill="#231e19" stroke="#fff1dc" strokeOpacity=".14"><path d="M0 132 L120 140 V150 L0 150 Z" /><path d="M390 132 L270 140 V150 L390 150 Z" /></g>
-      <path d="M0 158 L120 156 H270 L390 158" fill="none" stroke="#fff1dc" strokeWidth="1.6" strokeOpacity=".75" filter="url(#s-blur)" />
-      <rect x="120" y="84" width="150" height="94" fill="#120f0d" />
-      <rect x="120" y="86" width="16" height="92" fill="url(#s-curtain)" /><rect x="254" y="86" width="16" height="92" fill="url(#s-curtain)" />
-      <rect x="140" y="94" width="110" height="62" fill="#fff1dc" opacity=".16" />
-      <rect width="390" height="250" fill="url(#s-glow)" />
-      <path d="M110 178 H280" stroke="#fff1dc" strokeOpacity=".35" />
-      <path d={SEATS} fill="#0b0908" stroke="#fff1dc" strokeOpacity=".14" strokeWidth=".7" />
+    <svg className="seats" viewBox="0 0 390 110" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <path d={FRONT_SEATS} fill="#0b0908" stroke="#fff1dc" strokeOpacity=".16" strokeWidth=".8" />
     </svg>
   );
 }

@@ -61,6 +61,14 @@ export function shortLabel(label: string): string {
   return label.split(" | ")[0]!.trim();
 }
 
+/** The cinema's own film page, preferring the arthouse sites (they describe the film best). */
+const PAGE_PREFERENCE = ["nimas", "cinemateca", "saojorge", "fernandolopes", "ideal", "nos", "cinemacity", "uci"];
+export function filmPage(g: FilmGroup): string | undefined {
+  const withPage = g.sessions.filter((s) => s.film.filmUrl?.startsWith("https://"));
+  withPage.sort((a, b) => PAGE_PREFERENCE.indexOf(a.source) - PAGE_PREFERENCE.indexOf(b.source));
+  return withPage[0]?.film.filmUrl;
+}
+
 function merge(groups: FilmGroup[]): FilmGroup {
   return newGroup(groups.flatMap((g) => g.sessions));
 }
@@ -167,6 +175,8 @@ export async function buildProgramme(inp: BuildInput): Promise<{ programme: Prog
     if (runtime) f.runtimeMin = runtime;
     const poster = m?.film.posterPath ? `https://image.tmdb.org/t/p/w342${m.film.posterPath}` : g.posters[0];
     if (poster) f.posterUrl = poster;
+    const page = filmPage(g);
+    if (page) f.pageUrl = page;
     if (m) {
       f.tmdbId = m.film.id;
       f.letterboxdUrl = `https://letterboxd.com/tmdb/${m.film.id}/`;
