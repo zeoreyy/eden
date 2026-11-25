@@ -7,6 +7,7 @@
 import { cinemasForSource } from "@eden/shared";
 import { USER_AGENT } from "../http.ts";
 import type { SourceResult } from "../types.ts";
+import { htmlLines } from "../util.ts";
 
 export type UciBlock = "cloudflare-challenge" | "queue-it" | null;
 
@@ -30,12 +31,18 @@ export async function scrapeUci(): Promise<SourceResult> {
     const warnings: string[] = [];
     for (const c of cinemasForSource("uci")) {
       const page = await context.newPage();
-      await page.goto(c.url, { waitUntil: "domcontentloaded", timeout: 90_000 });
+      const res = await page.goto(c.url, { waitUntil: "domcontentloaded", timeout: 90_000 });
       await page.waitForLoadState("networkidle", { timeout: 30_000 }).catch(() => {});
-      const block = detectUciBlock(page.url(), await page.title(), await page.content());
+      const [title, html] = [await page.title(), await page.content()];
+      const block = detectUciBlock(page.url(), title, html);
       await page.close();
       if (block) throw new Error(`${c.shortName}: blocked by ${block} — not bypassing; UCI stays on venue links`);
-      warnings.push(`${c.shortName}: page loaded but no parser yet — save it as a fixture first`);
+      // No parser until a real page has been seen. Log what a visitor sees — status, URL, title, visible
+      // text only (never the raw HTML: it embeds UCI's API token, and CI logs are public).
+      const lines = htmlLines(html);
+      console.log(`  UCI ${c.shortName}: HTTP ${res?.status()} ${page.url()} — "${title}" — ${lines.length} text lines:`);
+      for (const l of lines.slice(0, 80)) console.log(`    | ${l.slice(0, 140)}`);
+      warnings.push(`${c.shortName}: page loaded (HTTP ${res?.status()}, "${title}") but no parser yet`);
     }
     return { source: "uci", sessions: [], warnings };
   } finally {
