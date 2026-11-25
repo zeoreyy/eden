@@ -1,5 +1,5 @@
 /** Pure selectors over the programme JSON (no fetching here). */
-import { CINEMA_BY_ID, CINEMAS } from "@eden/shared";
+import { CINEMA_BY_ID, CINEMAS, cinemaRank } from "@eden/shared";
 import type { Cinema, Film, Programme, Session, SourceStatus } from "@eden/shared";
 import { addDays } from "./time.ts";
 
@@ -30,7 +30,8 @@ export function filmsOnDay(p: Programme, films: Map<string, Film>, date: string,
 }
 
 export function bySession(a: Session, b: Session): number {
-  return a.startsAt.localeCompare(b.startsAt) || (CINEMA_BY_ID.get(a.cinemaId)?.shortName ?? "").localeCompare(CINEMA_BY_ID.get(b.cinemaId)?.shortName ?? "", "pt");
+  // Same time → the cinema closer to the centre first.
+  return a.startsAt.localeCompare(b.startsAt) || cinemaRank(a.cinemaId) - cinemaRank(b.cinemaId);
 }
 
 /** One cinema's day as a timeline. */
@@ -53,7 +54,7 @@ export function filmSchedule(p: Programme, filmKey: string, fromDate: string, no
     .map(([date, cinemas]) => ({
       date,
       cinemas: [...cinemas].map(([cinemaId, sessions]) => ({ cinema: CINEMA_BY_ID.get(cinemaId)!, sessions: sessions.sort(bySession) }))
-        .sort((a, b) => bySession(a.sessions[0]!, b.sessions[0]!)),
+        .sort((a, b) => cinemaRank(a.cinema.id) - cinemaRank(b.cinema.id)), // centre-out (José)
     }));
 }
 
@@ -74,9 +75,10 @@ export interface CinemaStatus { cinema: Cinema; status?: SourceStatus }
 /** Cinemas whose source is not fresh — shown, never hidden (spec). */
 export function staleCinemas(p: Programme, kind?: Cinema["kind"]): CinemaStatus[] {
   return CINEMAS.filter((c) => (!kind || c.kind === kind) && p.sources[c.source] && !p.sources[c.source].ok)
+    .sort((a, b) => cinemaRank(a.id) - cinemaRank(b.id))
     .map((cinema) => ({ cinema, status: p.sources[cinema.source] }));
 }
 
 export function cinemasOfKind(kind: Cinema["kind"]): Cinema[] {
-  return CINEMAS.filter((c) => c.kind === kind);
+  return CINEMAS.filter((c) => c.kind === kind).sort((a, b) => cinemaRank(a.id) - cinemaRank(b.id));
 }

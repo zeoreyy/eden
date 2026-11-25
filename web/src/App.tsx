@@ -78,8 +78,9 @@ function Screens({ p, route, go }: { p: Programme; route: Route; go: (r: Route, 
         <PageTitle title={dayTitle} sub={daySub} />
         <DaySelector days={days} today={today} value={day} onChange={pickDay} />
         {beyondCommercialWeek(today, day) && <p className="note">{t.nextWeekNote}</p>}
-        <StaleNotes p={p} now={now} />
         <div className="list">{cards()}</div>
+        {/* Cinemas without times: still shown (never hidden), but after the films (José). */}
+        <StaleNotes p={p} now={now} />
       </>
     );
   } else {

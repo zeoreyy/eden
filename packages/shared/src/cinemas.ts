@@ -34,6 +34,25 @@ export const CINEMAS: readonly Cinema[] = [
 
 export const CINEMA_BY_ID: ReadonlyMap<string, Cinema> = new Map(CINEMAS.map((c) => [c.id, c]));
 
+/**
+ * Display order: from the city centre (Baixa / Marquês) outwards (José, 25 Nov 2026).
+ * The UCIs go last for now — no times until UCI grants access (decision #33).
+ */
+export const CENTRE_OUT: readonly string[] = [
+  // arthouse
+  "ideal", "sao-jorge", "cinemateca", "nimas", "fernando-lopes",
+  // commercial
+  "nos-amoreiras", "cc-campo-pequeno", "cc-alvalade", "nos-colombo", "nos-vasco-da-gama", "cc-alegro-alfragide",
+  "nos-odivelas-strada", "nos-almada-forum", "nos-oeiras-parque", "nos-cascaishopping", "nos-forum-montijo", "cc-alegro-setubal",
+  "uci-el-corte-ingles", "uci-ubbo",
+];
+const RANK = new Map(CENTRE_OUT.map((id, i) => [id, i]));
+
+/** Lower = closer to the centre. */
+export function cinemaRank(id: string): number {
+  return RANK.get(id) ?? CENTRE_OUT.length;
+}
+
 export function cinemasForSource(source: Cinema["source"]): Cinema[] {
   return CINEMAS.filter((c) => c.source === source);
 }
