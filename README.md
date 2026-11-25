@@ -37,7 +37,7 @@ npm run deploy           # build + deploy the Worker
 
 ## Known limitations
 
-- **UCI (El Corte Inglés, UBBO):** shown with a link to UCI's site and no times yet. UCI's pages show a Cloudflare check to home connections but load from GitHub Actions; the parser is being written against what that page shows (no token reuse, no bot evasion).
+- **UCI (El Corte Inglés, UBBO):** listed last, with a link to UCI's site and no times. UCI's site blocks automated visitors (Cloudflare) from everywhere we've tried, and we don't evade that; we've asked UCI for access.
 - **Rotten Tomatoes:** not shown — OMDb no longer provides it (decision #24). IMDb only.
 - **Next week's commercial programme** appears on Thursday (NOS/UCI publish through Wednesday); the Semana tab says so.
 - **Cinemateca** publishes month by month, so early in a month the later days are empty until they post them.
