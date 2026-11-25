@@ -1,0 +1,35 @@
+# Decision log
+
+| # | Decision | Why |
+|---|---|---|
+| 1 | Name **eden** (always lowercase, even the first letter) | After the Éden Teatro, Lisbon's Art Deco cinema palace; timeless and local. |
+| 2 | Zero cost, no custom domain (`*.workers.dev`) | José's hard requirement. |
+| 3 | No LLM in the pipeline | Deterministic, free, predictable. |
+| 4 | Scrape in GitHub Actions, serve from a Cloudflare Worker + KV | Free Workers can't run browsers or heavy parsing; KV avoids commit spam in git and R2 needs a card. |
+| 5 | UCI via Playwright loading the public page, not by reusing its embedded API token | Token reuse = unauthorized access; a real browser reading the public page is legitimate. If Queue-it blocks, UCI goes stale with a venue link — no evasion. |
+| 6 | Letterboxd: link only, no rating | ToS forbids scraping; API invite-only. |
+| 7 | TMDB for matching + OMDb for IMDb | Many sources only give Portuguese titles; TMDB searches pt-PT and returns imdb_id. Both free. |
+| 8 | Culturgest dropped | Almost no regular film screenings. |
+| 9 | Cinema City Beloura, NOS Torres Vedras excluded | Beloura not operating; Torres Vedras outside the AML. |
+| 10 | Week = rolling 7 days | NOS/UCI publish only until Wednesday; rolling view + note is honest. |
+| 11 | Top picks: NOS's own top list + evening cross-cinema count; ordering only | Cinemas already signal their picks; nothing is ever hidden. |
+| 12 | After-midnight sessions belong to the previous evening | Matches how cinemas (NOS operationalDate) and people think. |
+| 13 | PT default + EN toggle in v1 | Lisbon audience + many foreign cinephiles. |
+| 14 | Arthouse tab labelled "Autor" (PT) / "Arthouse" (EN) | José's wording: cinemas de autor. |
+| 15 | Vite + React + TS + Tailwind, PWA | One JSON, client-side app; installable on the phone. |
+| 16 | UCI: honest headless browser only; it hits a Cloudflare Turnstile (24 Nov 2026) → UCI shown with venue link, no times | Solving/evading a "confirm you're human" check is bot evasion. Revisit only if UCI's page becomes reachable or UCI grants access. |
+| 17 | São Jorge via server-rendered `/programacao/page/N/` + event pages, not REST or admin-ajax | REST has no session dates; admin-ajax needs a page nonce (token reuse). |
+| 18 | Chip links prefer the cinema's own booking page for the film when no session link exists (Ideal `?movieid=`, Fernando Lopes Ticketline event), else the film page, else venue | Most useful real link; still never invented. |
+| 19 | TMDB matching is conservative: exact normalised title (PT or original) + year (±1) or director agreeing; with neither, only recent releases (last 3 years) whose runtime doesn't contradict. When no title is shared (TMDB only knows "Ojczyzna" for Pawlikowski's *Fatherland*), director + year (±1) + runtime (±15 min) must all agree. Directors stored by TMDB in another script ("Андрей Тарковский") count as unknown, not as a mismatch. A near-miss (e.g. Cinema City "DUNE PARTE TRES") is adopted only if another cinema's listing was verified as that same TMDB id | A wrong match shows wrong ratings — worse than none. Fixes go in `data/overrides.json` (normalised title → TMDB id, or null). |
+| 20 | Display title = the cinemas' mixed-case variant used by most sessions; TMDB's pt-PT casing only to fix ALL CAPS, else simple title case. Runtime from the cinemas, poster from TMDB (pt-PT) else the cinema's | Spec: titles as published by the cinema. |
+| 21 | Letterboxd link = `https://letterboxd.com/tmdb/<id>/` for matched films only (verified: 302 to the film page). Unmatched films get no Letterboxd link | Letterboxd's search page answers 403 to scripts, so it can't be verified — never invent URLs. |
+| 22 | Caches in `scraper/.cache/` (gitignored): TMDB details + match decisions 30 days, "no match" 3 days, OMDb ratings 7 days; persisted between CI runs with `actions/cache` (Phase 6) | Free, no commit spam, keeps OMDb well under 1,000/day. |
+| 23 | A failing source never fails the run: it's recorded in `programme.sources` (ok=false, lastSuccess kept) and its last good sessions are carried over. Fails = scraper error, 0 sessions, > 20% malformed, or < ¼ of the last good run's sessions for the same days | Never hide a cinema silently; a broken parser usually yields a handful of sessions, not zero. |
+| 24 | **IMDb rating only** — Rotten Tomatoes dropped, Metacritic not added (José, 25 Nov 2026) | OMDb stopped returning RT (1 of 87 rated films had it; even Pulp Fiction only has IMDb + Metacritic). No other free, legitimate RT source. |
+| 25 | Live at **https://eden.zeorey.workers.dev** (Worker `eden`, KV namespace `eden-programme`, key `programme:v1`). Only `/api/*` runs the Worker (`run_worker_first`); everything else is static assets with SPA fallback. `/api/programme` streams from KV with `cacheTtl` 300 s + `Cache-Control: max-age=600` | Data changes ≤ 3×/day, so a new publish shows within ~15 min. Static assets cost no Worker invocations. Note: KV also caches "not found" for the `cacheTtl`, so the very first publish took up to 5 min to appear. |
+| 26 | Local deploys use José's existing `wrangler login` (OAuth). `CLOUDFLARE_API_TOKEN` is only needed for GitHub Actions (scraper publish + deploy), created in Phase 6 | No extra credentials until CI needs them. |
+| 27 | Design approved (25 Nov 2026): **Limelight** (display: wordmark, screen titles) + **Jost** (body, film titles); accent **pedra** `#d6a892` (rose travertine), light ribbons warm white `#fff1dc`, no gold. Emblem = the muse of the facade relief inside the stepped crown; header = the facade at night; the sala is a faint background, not a framed screen. Reference: `design/style-tile/` (`?p=a&a=pedra`) | José: old-school movie-poster type, the Éden's facade and relief, dark. Gold rejected. |
+| 28 | Session labels are cut to their first part (`"Correspondências - Rita Azevedo Gomes \| Realizadora Convidada"` → before the ` \| `) | Spec: one short label. |
+| 29 | App: URL is the state (`/`, `/semana`, `/comercial/<cinema>`, `/autor/<cinema>`, `?dia=`, `?filme=`); film sheet is a native `<dialog>` closed by Back. Offline: service worker serves the last `/api/programme` (NetworkFirst) and cached posters; app shows "Sem ligação: programação de há X" | Shareable links, real Back button, works in the metro. |
+| 30 | Hoje/Semana list every film of the day; cards show the next 5 sessions + "+ N sessões" (opens the sheet). Stale/failed sources listed under the title on Hoje/Semana and in the cinema lists | Spec ordering; never hide a cinema silently. |
+| 31 | GitHub Actions: `scrape.yml` cron `0 7,13,19 * * *` UTC (07/13/19 Lisbon winter, 08/14/20 summer) + manual; `deploy.yml` on pushes touching web/worker/shared; `ci.yml` typecheck + tests. `SourceStatus.failures` counts consecutive failed runs; at 2 an issue "Source failing: <id>" opens (label `source-failure`) and closes itself on recovery | Polite cadence; one issue per broken source, no spam. UCI will hold one open issue while Cloudflare blocks it (decision #16). |

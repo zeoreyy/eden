@@ -1,0 +1,44 @@
+// UCI — the public cinema pages, loaded in a real headless browser like a visitor (docs/sources.md §2).
+// Never extract the page's embedded API token; never try to get past Queue-it or Cloudflare challenges.
+// Status 24 Nov 2026: an honestly identified headless Chromium gets a Cloudflare Turnstile
+// ("Confirme que é humano") — even from a residential IP. Then this source fails cleanly and the app
+// shows UCI cinemas with their venue link (never hidden). No parser is written until a real page
+// has been seen: the DOM/response shape would otherwise be a guess.
+import { cinemasForSource } from "@eden/shared";
+import { USER_AGENT } from "../http.ts";
+import type { SourceResult } from "../types.ts";
+
+export type UciBlock = "cloudflare-challenge" | "queue-it" | null;
+
+/** Recognise the bot walls we must not try to pass. */
+export function detectUciBlock(url: string, title: string, html: string): UciBlock {
+  if (/queue-it\.net/i.test(url) || /queue-it/i.test(title)) return "queue-it";
+  if (/^(Um momento|Just a moment)/i.test(title) || /challenges\.cloudflare\.com|cdn-cgi\/challenge-platform/.test(html)) {
+    return "cloudflare-challenge";
+  }
+  return null;
+}
+
+export async function scrapeUci(): Promise<SourceResult> {
+  const { chromium } = await import("playwright");
+  const browser = await chromium.launch();
+  try {
+    const probe = await browser.newContext();
+    const baseUa = await (await probe.newPage()).evaluate(() => navigator.userAgent);
+    await probe.close();
+    const context = await browser.newContext({ locale: "pt-PT", timezoneId: "Europe/Lisbon", userAgent: `${baseUa} ${USER_AGENT}` });
+    const warnings: string[] = [];
+    for (const c of cinemasForSource("uci")) {
+      const page = await context.newPage();
+      await page.goto(c.url, { waitUntil: "domcontentloaded", timeout: 90_000 });
+      await page.waitForLoadState("networkidle", { timeout: 30_000 }).catch(() => {});
+      const block = detectUciBlock(page.url(), await page.title(), await page.content());
+      await page.close();
+      if (block) throw new Error(`${c.shortName}: blocked by ${block} — not bypassing; UCI stays on venue links`);
+      warnings.push(`${c.shortName}: page loaded but no parser yet — save it as a fixture first`);
+    }
+    return { source: "uci", sessions: [], warnings };
+  } finally {
+    await browser.close();
+  }
+}

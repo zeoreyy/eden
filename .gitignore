@@ -1,0 +1,22 @@
+node_modules/
+dist/
+out/
+.wrangler/
+.dev.vars
+.env
+.env.*
+!.env.example
+*.log
+coverage/
+playwright-report/
+test-results/
+scraper/.cache/
+.DS_Store
+Thumbs.db
+
+# agent skills (restore with: npx skills experimental_install)
+.claude/skills/
+.taste-skill/
+
+# Reference photos: inspiration only, not ours to publish (docs/design.md). Kept locally.
+design/references/*.webp

@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="pt" data-pair="a" data-accent="pedra">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>eden — style tile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Tile only: both display candidates. The app loads one display family + Jost (≤ 2 families, subset). -->
+<link href="https://fonts.googleapis.com/css2?family=Limelight&family=Big+Shoulders+Display:wght@800;900&family=Jost:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens ───────────────────────────────────────────── */
+:root {
+  --sala: #1a1613;        /* page: the darkened hall */
+  --balcao: #241f1a;      /* raised surface: sheet, tab bar */
+  --noite: #0e0c0c;       /* night sky / hall depth */
+  --travertino: #ece1cf;  /* text: the facade stone */
+  --po: #a89a84;          /* secondary text */
+  --luz: #fff1dc;         /* light ribbons: the ceiling strips (warm white, not gold) */
+  --metal: #23201d;       /* cast-metal lettering */
+  --cortina: #5c1c22;     /* velvet curtain */
+  --fio: rgb(236 225 207 / .18); /* hairlines */
+  --grain: .05;
+
+  --step--1: .8rem;
+  --step-0: 1rem;
+  --step-1: 1.125rem;
+  --step-2: 1.5625rem;
+  --step-3: 1.953rem;
+}
+/* Accent candidates — both from the building, both AA on --sala */
+[data-accent="pedra"]  { --acento: #d6a892; --acento-fio: rgb(214 168 146 / .45); } /* rose travertine of the facade */
+[data-accent="veludo"] { --acento: #e0645a; --acento-fio: rgb(224 100 90 / .45); }  /* red velvet of the seats */
+
+[data-pair="a"] { --display: "Limelight", serif; --display-wt: 400; --display-track: .01em; --display-case: none; }
+[data-pair="b"] { --display: "Big Shoulders Display", sans-serif; --display-wt: 900; --display-track: .01em; --display-case: uppercase; }
+:root { --body: "Jost", system-ui, sans-serif; }
+
+/* ── Base ─────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; }
+html { background: var(--sala); color: var(--travertino); font: 400 var(--step-0)/1.45 var(--body); -webkit-font-smoothing: antialiased; }
+body { max-width: 430px; margin: 0 auto; padding: 0 16px; position: relative; }
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; opacity: var(--grain); z-index: 10;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+h2 { font: var(--display-wt) var(--step-2)/1.1 var(--display); letter-spacing: var(--display-track); text-transform: var(--display-case); }
+section { padding: 28px 0 8px; }
+section > h2 { margin-bottom: 16px; }
+.note { color: var(--po); font-size: var(--step--1); margin-top: 8px; }
+:focus-visible { outline: 2px solid var(--luz); outline-offset: 3px; border-radius: 4px; }
+.full { margin: 0 -16px; display: block; width: calc(100% + 32px); height: auto; }
+.display { font-family: var(--display); font-weight: var(--display-wt); text-transform: var(--display-case); }
+
+/* ── Light ribbon divider (warm white, like the ceiling strips) ── */
+.ribbon { height: 7px; position: relative; margin: 20px 0; }
+.ribbon i { position: absolute; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgb(255 241 220 / .55) 30%, var(--luz) 50%, rgb(255 241 220 / .55) 70%, transparent); }
+.ribbon i:nth-child(1) { top: 0; left: 18%; right: 18%; opacity: .4; }
+.ribbon i:nth-child(2) { top: 3px; box-shadow: 0 0 8px rgb(255 241 220 / .35); }
+.ribbon i:nth-child(3) { top: 6px; left: 18%; right: 18%; opacity: .4; }
+
+/* ── Logo ─────────────────────────────────────────────── */
+.logo { display: grid; grid-template-columns: 1fr 104px; gap: 16px; align-items: center; }
+.lockup { text-align: center; color: var(--travertino); }
+.lockup .w { font: var(--display-wt) 4.2rem/1 var(--display); letter-spacing: .02em; text-transform: none; }
+[data-pair="b"] .lockup .w { font-size: 5rem; }
+.lockup .bars { width: 46px; height: 7px; margin: 6px auto 6px; border-top: 2px solid var(--acento); border-bottom: 2px solid var(--acento); }
+.lockup .sub { font: 500 .75rem/1 var(--body); letter-spacing: .42em; color: var(--acento); padding-left: .42em; }
+.icon { width: 104px; aspect-ratio: 1; border-radius: 22px; background: var(--noite); border: 1px solid var(--fio); display: grid; place-items: center; overflow: hidden; }
+.emblem-row { display: flex; gap: 18px; align-items: end; margin-top: 18px; color: var(--acento); }
+.emblem-row svg { display: block; }
+
+/* ── Palette ──────────────────────────────────────────── */
+.fins { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.fin { height: 104px; border-radius: 40px 40px 3px 3px; border: 1px solid var(--fio); }
+.fins figcaption { font-size: var(--step--1); color: var(--po); margin-top: 6px; line-height: 1.25; }
+.fins b { display: block; color: var(--travertino); font-weight: 600; }
+
+/* ── Type scale ───────────────────────────────────────── */
+.scale > * + * { margin-top: 10px; }
+.s3 { font: var(--display-wt) var(--step-3)/1.05 var(--display); text-transform: var(--display-case); }
+.s1 { font: 600 var(--step-1)/1.25 var(--body); }
+.sm1 { font-size: var(--step--1); color: var(--po); }
+
+/* ── Day selector: a balcony front with box partitions ── */
+.days { display: flex; margin: 0 -16px; padding: 0 16px; overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--fio); border-bottom: 1px solid var(--fio); }
+.days button { flex: 1 0 52px; min-height: 52px; padding: 6px 4px 9px; background: none; border: 0; border-left: 1px solid var(--fio); color: var(--po); font: 400 .75rem/1.2 var(--body); position: relative; cursor: pointer; }
+.days button:first-child { border-left: 0; }
+.days button b { display: block; font: var(--display-wt) 1.25rem/1.15 var(--display); color: var(--travertino); opacity: .75; text-transform: var(--display-case); }
+.days button[aria-current] { color: var(--travertino); background: linear-gradient(to top, rgb(255 241 220 / .08), transparent 70%); }
+.days button[aria-current] b { opacity: 1; }
+.days button[aria-current]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; background: var(--luz); box-shadow: 0 0 10px 1px rgb(255 241 220 / .5); }
+
+/* ── Movie card (unchanged layout) ────────────────────── */
+.film { display: grid; grid-template-columns: 92px 1fr; gap: 14px; }
+.film img { width: 92px; aspect-ratio: 2/3; object-fit: cover; border-radius: 3px; background: var(--balcao); display: block; }
+.film h3 { font: 600 var(--step-1)/1.25 var(--body); text-wrap: balance; }
+.film .orig { color: var(--po); font-size: .875rem; margin-top: 2px; }
+.facts { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: .875rem; color: var(--po); font-variant-numeric: tabular-nums; }
+.facts .imdb b { color: var(--travertino); font-weight: 600; }
+.chips { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 4px; }
+.chip { display: block; min-height: 58px; padding: 7px 9px 6px; border: 1px solid var(--fio); border-radius: 12px 12px 3px 3px; color: inherit; text-decoration: none; line-height: 1.2; overflow: hidden; }
+.chip time { display: block; font: 600 1.0625rem/1.2 var(--body); font-variant-numeric: tabular-nums; }
+.chip .where { display: block; font-size: .8125rem; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip .what { display: block; font-size: .75rem; color: var(--po); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip:hover { border-color: var(--acento-fio); }
+.chip.more { display: grid; place-items: center; color: var(--po); font-size: .8125rem; }
+.badge { display: inline-block; font-size: .6875rem; line-height: 1; padding: 3px 6px 2px; margin-right: 4px; border: 1px solid var(--acento); border-radius: 8px 8px 2px 2px; color: var(--acento); vertical-align: 1px; }
+
+/* ── Stale-source note ────────────────────────────────── */
+.stale { display: flex; gap: 10px; align-items: baseline; padding: 10px 0; border-top: 1px solid var(--fio); border-bottom: 1px solid var(--fio); font-size: .875rem; }
+.stale strong { font-weight: 600; }
+.stale span { color: var(--po); }
+.stale a { margin-left: auto; color: var(--acento); white-space: nowrap; }
+
+/* ── Film sheet (arched top) ──────────────────────────── */
+.sheet { background: var(--balcao); margin: 0 -16px; padding: 22px 16px 18px; border-radius: 50% 50% 0 0 / 34px 34px 0 0; position: relative; }
+.sheet::before { content: ""; position: absolute; top: 9px; left: 50%; width: 36px; height: 3px; margin-left: -18px; border-radius: 3px; background: var(--fio); }
+.sheet h4 { font: var(--display-wt) 1.4rem/1.15 var(--display); text-transform: var(--display-case); margin: 14px 0 8px; }
+.sheet .cinema { font-size: .875rem; color: var(--po); margin: 10px 0 6px; }
+.sheet .lb { display: inline-block; margin-top: 16px; color: var(--acento); font-size: .875rem; }
+
+/* ── Tab bar ──────────────────────────────────────────── */
+.tabs { margin: 24px -16px 0; background: var(--balcao); border-top: 1px solid var(--fio); }
+.tabs nav { display: grid; grid-template-columns: repeat(4, 1fr); }
+.tabs a { min-height: 56px; display: grid; place-items: center; color: var(--po); text-decoration: none; font-size: .875rem; position: relative; }
+.tabs a[aria-current] { color: var(--travertino); font-weight: 600; }
+.tabs a[aria-current]::before { content: ""; position: absolute; top: -1px; left: 22%; right: 22%; height: 2px; background: var(--luz); box-shadow: 0 0 12px 2px rgb(255 241 220 / .45); border-radius: 2px; }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+</head>
+<body>
+
+<!-- ══ The emblem: the muse of the Éden's central relief, redrawn as an original geometric line figure ══ -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="muse" viewBox="0 0 120 124">
+    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <!-- robe: a column with pleats -->
+      <path d="M53 46 L49 108 H71 L67 46 Z" fill="var(--emblem-bg, #0e0c0c)" stroke-width="2.4"/>
+      <path d="M56.5 53 V108 M60 53 V108 M63.5 53 V108" stroke-width="1.3"/>
+      <!-- drapery falling from the raised arms -->
+      <path d="M53 48 Q47 66 49 84 M67 48 Q73 66 71 84" stroke-width="1.3" opacity=".7"/>
+      <!-- arms raised in a V -->
+      <path d="M53.5 47 L44 28 L40 12 M66.5 47 L76 28 L80 12" stroke-width="2.6"/>
+      <circle cx="40" cy="10" r="2.2" fill="currentColor" stroke="none"/><circle cx="80" cy="10" r="2.2" fill="currentColor" stroke="none"/>
+      <!-- head -->
+      <circle cx="60" cy="37" r="6.5" fill="var(--emblem-bg, #0e0c0c)" stroke-width="2.4"/>
+      <!-- plinth -->
+      <path d="M42 113 H78 M34 119 H86" stroke-width="2.4"/>
+    </g>
+  </symbol>
+  <!-- emblem = the muse inside the stepped crown of the facade -->
+  <symbol id="emblem" viewBox="0 0 120 132">
+    <path d="M6 128 V44 H18 V26 H32 V6 H88 V26 H102 V44 H114 V128 Z" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="miter"/>
+    <path d="M12 128 V50 H24 V32 H38 V12 H82 V32 H96 V50 H108 V128" fill="none" stroke="currentColor" stroke-width="1" opacity=".55"/>
+    <use href="#muse" x="22" y="18" width="76" height="104"/>
+  </symbol>
+</svg>
+
+<!-- ══ 1. Facade at night ══ -->
+<svg class="full" id="facade" viewBox="0 0 390 300" role="img" aria-label="Fachada do Éden à noite">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b0a0c"/><stop offset="1" stop-color="#15120f"/></linearGradient>
+    <linearGradient id="stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b302c"/><stop offset=".55" stop-color="#5e4c45"/><stop offset="1" stop-color="#8a7266"/></linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1dc" stop-opacity=".95"/><stop offset="1" stop-color="#f0c9a0" stop-opacity=".7"/></linearGradient>
+    <linearGradient id="recess" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f1b17"/><stop offset="1" stop-color="#3a3129"/></linearGradient>
+    <radialGradient id="flood" cx="50%" cy="100%" r="70%"><stop offset="0" stop-color="#fff1dc" stop-opacity=".18"/><stop offset="1" stop-color="#fff1dc" stop-opacity="0"/></radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="cast" x="-10%" y="-10%" width="130%" height="140%"><feDropShadow dx="1.4" dy="2" stdDeviation=".7" flood-color="#000" flood-opacity=".65"/></filter>
+    <clipPath id="stoneClip">
+      <path d="M58 300 V84 H104 V42 H120 V22 H270 V42 H286 V84 H332 V300 Z"/>
+      <path d="M8 300 V62 H58 V300 Z M332 300 V62 H382 V300 Z"/>
+    </clipPath>
+  </defs>
+  <rect width="390" height="300" fill="url(#sky)"/>
+  <!-- towers: stepped tiers of glowing vertical fins -->
+  <g id="towerL">
+    <path d="M14 62 V44 H20 V28 H26 V12 H40 V28 H46 V44 H52 V62 Z" fill="#2c2621"/>
+    <g fill="url(#glass)" filter="url(#glow)">
+      <rect x="29" y="15" width="2.2" height="11"/><rect x="34.8" y="15" width="2.2" height="11"/>
+      <rect x="23" y="31" width="2" height="11"/><rect x="28.5" y="31" width="2" height="11"/><rect x="35.5" y="31" width="2" height="11"/><rect x="41" y="31" width="2" height="11"/>
+      <rect x="17" y="47" width="2" height="13"/><rect x="22.5" y="47" width="2" height="13"/><rect x="28" y="47" width="2" height="13"/><rect x="36" y="47" width="2" height="13"/><rect x="41.5" y="47" width="2" height="13"/><rect x="47" y="47" width="2" height="13"/>
+    </g>
+  </g>
+  <use href="#towerL" transform="translate(390 0) scale(-1 1)"/>
+  <!-- stone body -->
+  <g clip-path="url(#stoneClip)">
+    <rect width="390" height="300" fill="url(#stone)"/>
+    <rect width="390" height="300" fill="url(#flood)"/>
+    <g id="joints" stroke="#000" stroke-opacity=".16" stroke-width=".6"></g>
+  </g>
+  <!-- cornice highlights on the stepped crown -->
+  <path d="M58 84 H104 V42 H120 V22 H270 V42 H286 V84 H332" fill="none" stroke="#fff1dc" stroke-opacity=".28"/>
+  <path d="M8 62 H58 M332 62 H382" stroke="#fff1dc" stroke-opacity=".2"/>
+  <!-- tower glazing: tall lit stair windows -->
+  <g fill="url(#glass)" filter="url(#glow)" opacity=".85">
+    <rect x="27" y="74" width="12" height="196"/><rect x="351" y="74" width="12" height="196"/>
+  </g>
+  <g stroke="#2c2621" stroke-width="1.2">
+    <path d="M27 96 H39 M27 118 H39 M27 140 H39 M27 162 H39 M27 184 H39 M27 206 H39 M27 228 H39 M27 250 H39 M33 74 V270"/>
+    <path d="M351 96 H363 M351 118 H363 M351 140 H363 M351 162 H363 M351 184 H363 M351 206 H363 M351 228 H363 M351 250 H363 M357 74 V270"/>
+  </g>
+  <!-- cast-metal lettering -->
+  <g class="display" fill="var(--metal)" filter="url(#cast)" text-anchor="middle">
+    <text id="facadeWord" x="195" y="58" font-size="29" letter-spacing="1.5">eden</text>
+    <rect x="185" y="65" width="20" height="1.6"/><rect x="185" y="68.6" width="20" height="1.6"/>
+    <text x="195" y="80.5" font-family="Jost" font-weight="600" font-size="7.5" letter-spacing="3.4" style="text-transform:uppercase">·&#8202;Lisboa&#8202;·</text>
+  </g>
+  <!-- relief panel with the muse -->
+  <rect x="134" y="96" width="122" height="86" fill="url(#recess)"/>
+  <path d="M130 96 H260" stroke="#fff1dc" stroke-opacity=".3" stroke-width="2"/>
+  <use href="#muse" x="152" y="100" width="86" height="80" style="color:#cdb79c; --emblem-bg:#2b251f"/>
+  <!-- pilasters and lit glazing below -->
+  <g fill="url(#glass)" opacity=".5" filter="url(#glow)">
+    <rect x="76" y="110" width="30" height="150"/><rect x="284" y="110" width="30" height="150"/>
+    <rect x="150" y="200" width="90" height="60"/>
+  </g>
+  <g stroke="#3b302c" stroke-width="1.4">
+    <path d="M86 110 V260 M96 110 V260 M76 135 H106 M76 160 H106 M76 185 H106 M76 210 H106 M76 235 H106"/>
+    <path d="M294 110 V260 M304 110 V260 M284 135 H314 M284 160 H314 M284 185 H314 M284 210 H314 M284 235 H314"/>
+    <path d="M165 200 V260 M180 200 V260 M195 200 V260 M210 200 V260 M225 200 V260 M150 220 H240 M150 240 H240"/>
+  </g>
+  <g fill="#6f5b52">
+    <rect x="66" y="100" width="8" height="166"/><rect x="108" y="100" width="8" height="166"/>
+    <rect x="274" y="100" width="8" height="166"/><rect x="316" y="100" width="8" height="166"/>
+  </g>
+  <!-- dentil band + canopy -->
+  <g id="dentils" fill="#2a241f"></g>
+  <rect x="0" y="282" width="390" height="18" fill="#141110"/>
+  <path d="M0 282 H390" stroke="#fff1dc" stroke-opacity=".5" filter="url(#glow)"/>
+</svg>
+
+<!-- ══ 2. The sala, seen from the seats: the screen is the page title ══ -->
+<svg class="full" id="sala" viewBox="0 0 390 250" role="img" aria-labelledby="hoje">
+  <defs>
+    <radialGradient id="screenGlow" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="#fff1dc" stop-opacity=".22"/><stop offset="1" stop-color="#fff1dc" stop-opacity="0"/></radialGradient>
+    <linearGradient id="screen" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff6ea"/><stop offset="1" stop-color="#e7d8c3"/></linearGradient>
+    <linearGradient id="strip" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff1dc"/><stop offset="1" stop-color="#fff1dc" stop-opacity=".25"/></linearGradient>
+    <linearGradient id="curtain" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3d1216"/><stop offset=".5" stop-color="var(--cortina)"/><stop offset="1" stop-color="#3d1216"/></linearGradient>
+    <filter id="glow2" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="390" height="250" fill="var(--noite)"/>
+  <!-- vault -->
+  <path d="M0 0 H390 V52 L270 84 H120 L0 52 Z" fill="#1b1714"/>
+  <path d="M0 52 Q195 -26 390 52" fill="none" stroke="#fff1dc" stroke-opacity=".12"/>
+  <!-- three ceiling light strips converging on the screen -->
+  <g filter="url(#glow2)">
+    <path d="M152 0 H162 L190 84 H187 Z" fill="url(#strip)"/>
+    <path d="M190 0 H200 L196.5 84 H193.5 Z" fill="url(#strip)"/>
+    <path d="M228 0 H238 L203 84 H200 Z" fill="url(#strip)"/>
+  </g>
+  <!-- side walls -->
+  <path d="M0 52 L120 84 V178 L0 232 Z" fill="#191512"/>
+  <path d="M390 52 L270 84 V178 L390 232 Z" fill="#191512"/>
+  <!-- stacked wall light coves -->
+  <g stroke="#fff1dc" stroke-linecap="round" filter="url(#glow2)">
+    <path d="M4 74 L112 98" stroke-width="2.4"/><path d="M4 86 L112 106" stroke-width="2" stroke-opacity=".8"/><path d="M4 98 L112 114" stroke-width="1.6" stroke-opacity=".6"/>
+    <path d="M386 74 L278 98" stroke-width="2.4"/><path d="M386 86 L278 106" stroke-width="2" stroke-opacity=".8"/><path d="M386 98 L278 114" stroke-width="1.6" stroke-opacity=".6"/>
+  </g>
+  <!-- balcony fronts with box partitions -->
+  <g fill="#231e19" stroke="#fff1dc" stroke-opacity=".14">
+    <path d="M0 132 L120 140 V150 L0 150 Z"/><path d="M390 132 L270 140 V150 L390 150 Z"/>
+  </g>
+  <g stroke="#fff1dc" stroke-opacity=".16"><path d="M20 133.5 V150 M42 135 V150 M64 136.5 V150 M84 138 V150 M102 139 V150"/><path d="M370 133.5 V150 M348 135 V150 M326 136.5 V150 M306 138 V150 M288 139 V150"/></g>
+  <!-- the long light ribbon under the balconies -->
+  <path d="M0 158 L120 156 H270 L390 158" fill="none" stroke="#fff1dc" stroke-width="1.6" stroke-opacity=".75" filter="url(#glow2)"/>
+  <!-- proscenium, curtains, screen -->
+  <rect x="120" y="84" width="150" height="94" fill="#120f0d"/>
+  <path d="M120 84 H270" stroke="#fff1dc" stroke-opacity=".2"/>
+  <rect x="120" y="86" width="16" height="92" fill="url(#curtain)"/><rect x="254" y="86" width="16" height="92" fill="url(#curtain)"/>
+  <g stroke="#000" stroke-opacity=".35"><path d="M124 86 V178 M129 86 V178 M132 86 V178 M258 86 V178 M262 86 V178 M266 86 V178"/></g>
+  <rect width="390" height="250" fill="url(#screenGlow)"/>
+  <rect x="140" y="94" width="110" height="62" fill="url(#screen)"/>
+  <text id="hoje" x="195" y="129" text-anchor="middle" class="display" font-size="26" fill="#1d1916">Hoje</text>
+  <text x="195" y="146" text-anchor="middle" font-family="Jost" font-size="8.5" fill="#4a4036" letter-spacing=".6">quarta, 25 de novembro</text>
+  <!-- stage edge -->
+  <path d="M110 178 H280" stroke="#fff1dc" stroke-opacity=".35"/>
+  <!-- seats: rows of seat backs, aisle in the middle -->
+  <g id="seats"></g>
+</svg>
+
+<div class="ribbon" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<section>
+  <h2>Logótipo</h2>
+  <div class="logo">
+    <div class="lockup"><div class="w">eden</div><div class="bars"></div><div class="sub">LISBOA</div></div>
+    <div class="icon" style="--emblem-bg: var(--noite); color: var(--acento)"><svg width="66" height="72"><use href="#emblem"/></svg></div>
+  </div>
+  <div class="emblem-row" style="--emblem-bg: var(--sala)">
+    <svg width="48" height="53"><use href="#emblem"/></svg>
+    <svg width="28" height="31"><use href="#emblem"/></svg>
+    <svg width="18" height="20"><use href="#emblem"/></svg>
+  </div>
+  <p class="note">A musa do relevo central da fachada, redesenhada em linha. Ícone da app, separadores, página 404 (“Galo”).</p>
+</section>
+
+<section>
+  <h2>Cor</h2>
+  <div class="fins" id="fins"></div>
+</section>
+
+<section class="scale">
+  <h2>Tipo</h2>
+  <p class="s3">Hoje em Lisboa</p>
+  <p class="s1">A Mulher Que Viveu Duas Vezes</p>
+  <p>Sessões em todas as salas, ordenadas pela próxima.</p>
+  <p class="sm1" id="pairName"></p>
+</section>
+
+<section>
+  <h2>Dias</h2>
+  <div class="days" role="tablist">
+    <button aria-current="date"><b>Hoje</b>qua</button>
+    <button><b>26</b>qui</button>
+    <button><b>27</b>sex</button>
+    <button><b>28</b>sáb</button>
+    <button><b>29</b>dom</button>
+    <button><b>30</b>seg</button>
+    <button><b>1</b>ter</button>
+  </div>
+</section>
+
+<section>
+  <h2>Filmes</h2>
+  <article class="film">
+    <img src="https://image.tmdb.org/t/p/w342/4e2iw4WmfoBK49K9Hy9ATxBzCv6.jpg" alt="" loading="lazy">
+    <div>
+      <h3>The Hunger Games - Amanhecer na Ceifa</h3>
+      <p class="orig">The Hunger Games: Sunrise on the Reaping</p>
+      <p class="facts"><span>2026</span><span>150 min</span><span class="imdb">IMDb <b>7.6</b></span></p>
+    </div>
+    <div class="chips">
+      <a class="chip" href="#"><time>18:20</time><span class="where">Colombo</span><span class="what">Sala 4 · Atmos</span></a>
+      <a class="chip" href="#"><time>18:30</time><span class="where">Alfragide</span><span class="what">Sala BIG</span></a>
+      <a class="chip" href="#"><time>19:00</time><span class="where">Almada Forum</span><span class="what">Sala 4DX</span></a>
+      <a class="chip" href="#"><time>19:10</time><span class="where">Amoreiras</span><span class="what">XVision</span></a>
+      <a class="chip" href="#"><time>19:30</time><span class="where">Vasco da Gama</span><span class="what">Sala 1 · IMAX</span></a>
+      <a class="chip more" href="#">+ 31 sessões</a>
+    </div>
+  </article>
+
+  <div class="ribbon" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <article class="film">
+    <img src="https://image.tmdb.org/t/p/w342/6vn2agaXQwksOzbxuYp3STS1p3T.jpg" alt="" loading="lazy">
+    <div>
+      <h3>Cavalo Selvagem Nove</h3>
+      <p class="orig">Wild Horse Nine</p>
+      <p class="facts"><span>2026</span><span>118 min</span></p>
+    </div>
+    <div class="chips">
+      <a class="chip" href="#"><time>18:00</time><span class="where">Amoreiras</span><span class="what">VIP 1</span></a>
+      <a class="chip" href="#"><time>18:40</time><span class="where">Colombo</span><span class="what">Sala 7</span></a>
+      <a class="chip" href="#"><time>19:20</time><span class="where">Alvalade</span><span class="what">&nbsp;</span></a>
+      <a class="chip" href="#"><time>21:00</time><span class="where">Ideal</span><span class="what"><span class="badge">Autor</span></span></a>
+      <a class="chip" href="#"><time>21:15</time><span class="where">Campo Pequeno</span><span class="what">&nbsp;</span></a>
+      <a class="chip more" href="#">+ 6 sessões</a>
+    </div>
+  </article>
+
+  <div class="ribbon" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <article class="film">
+    <img src="https://image.tmdb.org/t/p/w342/99INsqTGAtIULrKPO5pOrlRXr01.jpg" alt="" loading="lazy">
+    <div>
+      <h3>The Vanishing Virginian</h3>
+      <p class="facts"><span>1942</span><span>97 min</span><span class="imdb">IMDb <b>6.8</b></span></p>
+    </div>
+    <div class="chips">
+      <a class="chip" href="#"><time>18:30</time><span class="where">Cinemateca</span><span class="what"><span class="badge">Autor</span>Frank Borzage</span></a>
+    </div>
+  </article>
+</section>
+
+<section>
+  <h2>Avisos</h2>
+  <p class="stale"><strong>UCI El Corte Inglés</strong><span>sem horários</span><a href="#">ver no site</a></p>
+  <p class="stale"><strong>Nimas</strong><span>atualizado há 2 dias</span></p>
+</section>
+
+<section>
+  <h2>Ficha</h2>
+  <div class="sheet">
+    <h4>Viver - Ikiru</h4>
+    <p class="facts"><span>1952</span><span>143 min</span><span class="imdb">IMDb <b>8.3</b></span></p>
+    <p class="cinema">Quarta, 25 · Nimas</p>
+    <div class="chips"><a class="chip" href="#"><time>18:00</time><span class="where">Nimas</span><span class="what"><span class="badge">Autor</span></span></a></div>
+    <a class="lb" href="#">Ver no Letterboxd</a>
+  </div>
+</section>
+
+<div class="tabs"><nav aria-label="Secções">
+  <a href="#" aria-current="page">Hoje</a><a href="#">Semana</a><a href="#">Comercial</a><a href="#">Autor</a>
+</nav></div>
+
+<script>
+const q = new URLSearchParams(location.search);
+const root = document.documentElement;
+root.dataset.pair = q.get("p") || "a";
+root.dataset.accent = q.get("a") || "pedra";
+document.getElementById("pairName").textContent =
+  (root.dataset.pair === "a" ? "Limelight" : "Big Shoulders Display") + " + Jost";
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; };
+
+// ashlar joints: courses every 13 px, staggered vertical joints
+const joints = document.getElementById("joints");
+for (let y = 22, row = 0; y < 282; y += 21, row++) {
+  el("path", { d: `M0 ${y} H390` }, joints);
+  for (let x = (row % 2) * 34 + 12; x < 390; x += 68) el("path", { d: `M${x} ${y} V${y + 21}` }, joints);
+}
+// dentil band
+const dent = document.getElementById("dentils");
+for (let x = 60; x < 330; x += 6) el("rect", { x, y: 272, width: 3.2, height: 8 }, dent);
+
+// seat rows in perspective, with a centre aisle
+const seats = document.getElementById("seats");
+for (let k = 0; k < 11; k++) {
+  const t = k / 10, y = 184 + 62 * Math.pow(t, 1.3), w = 5 + 9 * t, h = 2.6 + 5 * t, gap = 2 + 1.6 * t;
+  const half = 92 + 120 * t, aisle = 6 + 16 * t;
+  for (const side of [-1, 1]) {
+    for (let x = aisle; x + w <= half; x += w + gap) {
+      const cx = 195 + side * (x + w / 2);
+      // seat back: a rounded hump, lit on its rim by the screen
+      el("path", { d: `M${cx - w / 2} ${y + h} V${y + h * .45} Q${cx - w / 2} ${y} ${cx} ${y} Q${cx + w / 2} ${y} ${cx + w / 2} ${y + h * .45} V${y + h}`, fill: "#0b0908", stroke: "#fff1dc", "stroke-opacity": 0.2 - 0.08 * t, "stroke-width": 0.7 }, seats);
+    }
+  }
+}
+
+// palette
+const cs = getComputedStyle(root);
+document.getElementById("fins").innerHTML = [["sala", "--sala"], ["noite", "--noite"], ["travertino", "--travertino"], [root.dataset.accent, "--acento"], ["luz", "--luz"]]
+  .map(([n, v]) => `<figure><div class="fin" style="background:var(${v})"></div><figcaption><b>${n}</b>${cs.getPropertyValue(v).trim()}</figcaption></figure>`).join("");
+</script>
+</body>
+</html>

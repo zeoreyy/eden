@@ -1,0 +1,50 @@
+name: Scrape
+on:
+  schedule:
+    # 3×/day (sources: be polite). Cron is UTC: 07/13/19 in Lisbon winter, 08/14/20 in summer.
+    - cron: "0 7,13,19 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Chromium for UCI (honest headless visit; see docs/decisions.md #16)
+        run: npx playwright install --with-deps chromium
+        working-directory: scraper
+      # TMDB match decisions + OMDb ratings between runs (decision #22). Each run saves a new entry.
+      - uses: actions/cache@v6
+        with:
+          path: scraper/.cache
+          key: scraper-cache-${{ github.run_id }}
+          restore-keys: scraper-cache-
+      - name: Scrape → match → rate → publish to KV
+        run: npm run scrape
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+          OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          KV_NAMESPACE_ID: ${{ secrets.KV_NAMESPACE_ID }}
+      - name: Report
+        if: always()
+        working-directory: scraper
+        run: |
+          if [ -f out/report.txt ]; then { echo '```'; cat out/report.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"; fi
+      - name: Open / close source-failure issues (2 failed runs in a row)
+        working-directory: scraper
+        run: npx tsx scripts/source-issues.ts
+        env:
+          GH_TOKEN: ${{ github.token }}
