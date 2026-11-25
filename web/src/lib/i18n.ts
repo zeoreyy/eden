@@ -24,6 +24,7 @@ const dict = {
     langSwitch: "EN", langLabel: "EN, switch to English",
     sessionsAt: (cinema: string) => `Sessões em ${cinema}`,
     footer: (ago: string) => `Programação das salas, atualizada ${ago}.`,
+    credits: "Dados de filmes: TMDB (sem endosso do TMDB). Classificações IMDb via OMDb.",
   },
   en: {
     today: "Today", week: "Week", commercial: "Commercial", arthouse: "Arthouse",
@@ -45,6 +46,7 @@ const dict = {
     langSwitch: "PT", langLabel: "PT, mudar para português",
     sessionsAt: (cinema: string) => `Sessions at ${cinema}`,
     footer: (ago: string) => `Cinema programmes, updated ${ago}.`,
+    credits: "Film data: TMDB (not endorsed or certified by TMDB). IMDb ratings via OMDb.",
   },
 } as const;
 

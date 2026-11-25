@@ -107,6 +107,8 @@ a { color: inherit; }
 .empty, .status { text-align: center; color: var(--color-po); padding: 48px 0; margin: 0; }
 .retry { margin-top: 12px; min-height: 44px; padding: 0 18px; border: 1px solid var(--pedra-fio); border-radius: 22px; color: var(--color-pedra); }
 .foot { text-align: center; color: var(--color-po); font-size: .75rem; padding: 36px 0 12px; }
+.foot p { margin: 0; }
+.foot .credits { margin-top: 6px; opacity: .8; }
 
 /* ── Cinema list + timeline ───────────────────────────── */
 .cinema-list { list-style: none; margin: 8px 0 0; padding: 0; }

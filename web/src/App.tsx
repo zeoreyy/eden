@@ -113,7 +113,7 @@ function Screens({ p, route, go }: { p: Programme; route: Route; go: (r: Route, 
     <>
       {!online && <p className="note offline" role="status">{t.offline(ago(p.generatedAt, lang, now))}</p>}
       {body}
-      <footer className="foot">{t.footer(ago(p.generatedAt, lang, now))}</footer>
+      <footer className="foot"><p>{t.footer(ago(p.generatedAt, lang, now))}</p><p className="credits">{t.credits}</p></footer>
       {sheetFilm && <FilmSheet p={p} film={sheetFilm} today={today} now={now} onClose={() => closeSheet(route, go)} />}
     </>
   );
