@@ -7,7 +7,7 @@ const b = await chromium.launch();
 const page = await (await b.newContext({ viewport: { width: 390, height: 844 }, colorScheme: "dark", serviceWorkers: "block" })).newPage();
 const screens: [string, string, ((p: typeof page) => Promise<unknown>)?][] = [
   ["semana", "/"], ["sheet", "/", (p) => p.locator(".film h3 button").first().click()], ["sabado", "/", (p) => p.locator(".days button").nth(3).click()],
-  ["comercial", "/comercial"], ["cinema", "/comercial/nos-colombo"], ["autor", "/autor"], ["cinemateca", "/autor/cinemateca"],
+  ["comercial", "/comercial"], ["cinema", "/comercial/nos-colombo"], ["autor", "/autor"], ["autor-cinemas", "/autor?ver=cinemas"], ["cinemateca", "/autor/cinemateca"],
 ];
 let total = 0;
 for (const [name, path, act] of screens) {

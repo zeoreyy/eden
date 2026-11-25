@@ -3,10 +3,10 @@ import { CINEMA_BY_ID } from "@eden/shared";
 import type { Film, Programme } from "@eden/shared";
 import { LangContext, initialLang, saveLang, strings, useT, type Lang } from "./lib/i18n.ts";
 import { closeSheet, useNow, useOnline, useProgramme, useRoute, routeHref, type Route, type Tab } from "./lib/hooks.ts";
-import { beyondCommercialWeek, filmsOnDay, weekDays } from "./lib/programme.ts";
+import { beyondCommercialWeek, filmsOnDay, weekDays, type FilmFilter } from "./lib/programme.ts";
 import { ago, lisbonDate, longDate, weekdayLong } from "./lib/time.ts";
 import { Emblem, SalaCeiling, SalaSeats } from "./components/Art.tsx";
-import { DaySelector, PageTitle, Ribbon, StaleNotes } from "./components/Bits.tsx";
+import { DaySelector, PageTitle, Ribbon, StaleNotes, ViewToggle } from "./components/Bits.tsx";
 import { FilmCard } from "./components/FilmCard.tsx";
 import { FilmSheet } from "./components/FilmSheet.tsx";
 import { CinemaList } from "./components/Cinemas.tsx";
@@ -60,13 +60,15 @@ function Screens({ p, route, go }: { p: Programme; route: Route; go: (r: Route, 
   const dayTitle = day === today ? t.today : weekdayLong(day, lang);
   const daySub = longDate(day, lang).replace(/^[^,\s]+,?\s*/, ""); // "25 de novembro" (the weekday is the title)
 
-  const cards = (cinemaId?: string) => {
-    const items = filmsOnDay(p, films, day, day === today ? now : undefined, cinemaId);
+  /** Film cards for the selected day — all cinemas, one kind (Comercial/Autor), or one cinema. */
+  const cards = (filter: FilmFilter = {}) => {
+    const items = filmsOnDay(p, films, day, day === today ? now : undefined, filter);
     if (!items.length) return <p className="empty">{day === today ? t.noMoreToday : t.noneThatDay}</p>;
     return items.map(({ film, sessions }, i) => (
       <div key={film.key}>
         {i > 0 && <Ribbon />}
-        <FilmCard film={film} sessions={sessions} onOpen={() => openFilm(film.key)} eager={i === 0} showCinema={!cinemaId} />
+        <FilmCard film={film} sessions={sessions} onOpen={() => openFilm(film.key)} eager={i === 0}
+          showCinema={!filter.cinemaId} badge={!filter.cinemaId && filter.kind !== "arthouse"} />
       </div>
     ));
   };
@@ -88,17 +90,28 @@ function Screens({ p, route, go }: { p: Programme; route: Route; go: (r: Route, 
     const cinema = route.cinemaId ? CINEMA_BY_ID.get(route.cinemaId) : undefined;
     body = cinema && cinema.kind === kind ? (
       <>
-        <a className="back" href={routeHref({ tab: route.tab })} onClick={(e) => { e.preventDefault(); go({ tab: route.tab, ...(route.day ? { day: route.day } : {}) }); }}>{t.back}</a>
+        <a className="back" href={routeHref({ tab: route.tab, view: "cinemas" })} onClick={(e) => { e.preventDefault(); go({ tab: route.tab, view: "cinemas", ...(route.day ? { day: route.day } : {}) }); }}>{t.back}</a>
         <PageTitle title={cinema.shortName} sub={`${dayTitle} · ${daySub}`} />
         <DaySelector days={days} today={today} value={day} onChange={pickDay} />
         {kind === "commercial" && beyondCommercialWeek(today, day) && <p className="note">{t.nextWeekNote}</p>}
         <StaleNotes p={{ ...p, sources: { [cinema.source]: p.sources[cinema.source] } as Programme["sources"] }} now={now} />
-        <div className="list">{cards(cinema.id)}</div>
+        <div className="list">{cards({ cinemaId: cinema.id })}</div>
       </>
     ) : (
       <>
-        <PageTitle title={kind === "commercial" ? t.commercial : t.arthouse} sub={longDate(today, lang)} />
-        <CinemaList p={p} kind={kind} today={today} now={now} onPick={(id) => go({ tab: route.tab, cinemaId: id, ...(route.day ? { day: route.day } : {}) })} />
+        <PageTitle title={kind === "commercial" ? t.commercial : t.arthouse} sub={route.view === "cinemas" ? longDate(today, lang) : `${dayTitle} · ${daySub}`} />
+        {/* José: in Comercial/Autor you may want the films, not the cinemas — default Filmes. */}
+        <ViewToggle value={route.view ?? "filmes"} onChange={(v) => go({ ...route, view: v === "cinemas" ? "cinemas" : undefined }, { replace: true })} />
+        {route.view === "cinemas" ? (
+          <CinemaList p={p} kind={kind} today={today} now={now} onPick={(id) => go({ tab: route.tab, cinemaId: id, view: "cinemas", ...(route.day ? { day: route.day } : {}) })} />
+        ) : (
+          <>
+            <DaySelector days={days} today={today} value={day} onChange={pickDay} />
+            {kind === "commercial" && beyondCommercialWeek(today, day) && <p className="note">{t.nextWeekNote}</p>}
+            <div className="list">{cards({ kind })}</div>
+            <StaleNotes p={p} kind={kind} now={now} />
+          </>
+        )}
       </>
     );
   }

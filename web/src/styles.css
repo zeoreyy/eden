@@ -76,6 +76,14 @@ main { position: relative; z-index: 1; }
 .days [aria-pressed="true"] b { opacity: 1; }
 .days [aria-pressed="true"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; background: var(--color-luz); box-shadow: var(--glow); }
 
+/* ── Filmes | Cinemas toggle ──────────────────────────── */
+.view-toggle { display: grid; grid-template-columns: 1fr 1fr; width: min(100%, 280px); margin: 0 auto 14px; border: 1px solid var(--fio); border-radius: 14px 14px 4px 4px; overflow: hidden; background: rgb(26 22 19 / .7); }
+.view-toggle button { min-height: 44px; color: var(--color-po); font-size: .9375rem; position: relative; }
+.view-toggle button + button { border-left: 1px solid var(--fio); }
+.view-toggle button:hover { color: var(--color-travertino); }
+.view-toggle [aria-pressed="true"] { color: var(--color-travertino); font-weight: 600; background: linear-gradient(to top, rgb(255 241 220 / .09), transparent 70%); }
+.view-toggle [aria-pressed="true"]::after { content: ""; position: absolute; left: 22%; right: 22%; bottom: 0; height: 2px; background: var(--color-luz); box-shadow: var(--glow); }
+
 /* ── Film card ────────────────────────────────────────── */
 .list { margin-top: 12px; }
 .list > div { content-visibility: auto; contain-intrinsic-size: auto 260px; }

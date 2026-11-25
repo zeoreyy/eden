@@ -1,7 +1,7 @@
 import type { Cinema, Programme } from "@eden/shared";
 import { useT } from "../lib/i18n.ts";
-import { cinemaDay, cinemasOfKind } from "../lib/programme.ts";
-import { ago } from "../lib/time.ts";
+import { cinemaDay, cinemasOfKind, nextSessionDate } from "../lib/programme.ts";
+import { ago, dayOfMonth, weekdayShort } from "../lib/time.ts";
 
 /** Comercial / Autor: the cinemas, each with today's remaining sessions or its data status. */
 export function CinemaList({ p, kind, today, now, onPick }: { p: Programme; kind: Cinema["kind"]; today: string; now: number; onPick: (id: string) => void }) {
@@ -11,7 +11,10 @@ export function CinemaList({ p, kind, today, now, onPick }: { p: Programme; kind
       {cinemasOfKind(kind).map((c) => {
         const status = p.sources[c.source];
         const left = cinemaDay(p, c.id, today, now).length;
-        const note = !status?.ok ? (status?.lastSuccess ? t.updated(ago(status.lastSuccess, lang, now)) : t.noTimes) : t.sessions(left);
+        const next = left ? undefined : nextSessionDate(p, c.id, today, now);
+        const note = !status?.ok ? (status?.lastSuccess ? t.updated(ago(status.lastSuccess, lang, now)) : t.noTimes)
+          : left ? t.sessions(left)
+          : next ? t.nextOn(`${weekdayShort(next, lang)} ${dayOfMonth(next)}`) : t.nothingSoon;
         return (
           <li key={c.id}>
             <button type="button" onClick={() => onPick(c.id)}>

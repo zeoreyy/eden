@@ -42,6 +42,18 @@ export function StaleNotes({ p, kind, now }: { p: Programme; kind?: Cinema["kind
   );
 }
 
+/** Filmes | Cinemas — a two-box balcony front, the active box lit like the selected day. */
+export function ViewToggle({ value, onChange }: { value: "filmes" | "cinemas"; onChange: (v: "filmes" | "cinemas") => void }) {
+  const { t } = useT();
+  return (
+    <div className="view-toggle" role="group" aria-label={t.view}>
+      {(["filmes", "cinemas"] as const).map((v) => (
+        <button key={v} type="button" aria-pressed={value === v} onClick={() => onChange(v)}>{v === "filmes" ? t.films : t.cinemas}</button>
+      ))}
+    </div>
+  );
+}
+
 export function PageTitle({ title, sub }: { title: string; sub?: string }) {
   return (
     <div className="page-title">

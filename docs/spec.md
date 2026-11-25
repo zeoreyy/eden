@@ -26,8 +26,8 @@ Out of scope: Culturgest (almost no film screenings), Cinema City Beloura (not o
 | PT | EN | Content |
 |---|---|---|
 | Semana | Week | Home. Rolling 7 days with a day selector, **today selected by default** (title "Hoje"); every film showing that day across all 19 cinemas |
-| Comercial | Commercial | List of commercial cinemas → tap one → that cinema's day as **film cards** (same as Semana, sessions of that cinema only), day selector |
-| Autor | Arthouse | Same for the 5 arthouse cinemas; cycle labels matter most here |
+| Comercial | Commercial | Toggle **Filmes \| Cinemas** (default Filmes). Filmes = Semana restricted to commercial cinemas (top picks first). Cinemas = list (centre-out; shows today's count or "próxima: qui 26") → tap one → that cinema's day as film cards, day selector |
+| Autor | Arthouse | Same for the 5 arthouse cinemas (Filmes never ranked); cycle labels matter most here |
 
 No other tabs, no "next hour" view, no extra filters.
 

@@ -11,15 +11,18 @@ export const isArthouse = (s: Session) => CINEMA_BY_ID.get(s.cinemaId)?.kind ===
  * Films showing on `date`, top picks first (in their order), then by next session time (spec).
  * When `now` is given (Hoje), past sessions are hidden and films with none left drop out.
  */
-export function filmsOnDay(p: Programme, films: Map<string, Film>, date: string, now?: number, cinemaId?: string): FilmDay[] {
+export interface FilmFilter { cinemaId?: string; kind?: Cinema["kind"] }
+
+export function filmsOnDay(p: Programme, films: Map<string, Film>, date: string, now?: number, { cinemaId, kind }: FilmFilter = {}): FilmDay[] {
   const byFilm = new Map<string, Session[]>();
   for (const s of p.sessions) {
     if (s.programmeDate !== date || (cinemaId && s.cinemaId !== cinemaId)) continue;
+    if (kind && CINEMA_BY_ID.get(s.cinemaId)?.kind !== kind) continue;
     if (now != null && Date.parse(s.startsAt) <= now) continue;
     (byFilm.get(s.filmKey) ?? byFilm.set(s.filmKey, []).get(s.filmKey)!).push(s);
   }
-  // A cinema's own page is chronological; the city-wide list puts top picks first (spec).
-  const picks = cinemaId ? [] : p.topPicks[date] ?? [];
+  // A cinema's own page is chronological; arthouse is never ranked (spec); otherwise top picks first.
+  const picks = cinemaId || kind === "arthouse" ? [] : p.topPicks[date] ?? [];
   const rank = (k: string) => (picks.includes(k) ? picks.indexOf(k) : Infinity);
   return [...byFilm]
     .flatMap(([key, sessions]) => {
@@ -68,6 +71,16 @@ export function beyondCommercialWeek(today: string, date: string): boolean {
   const dow = new Date(`${today}T12:00:00Z`).getUTCDay(); // 0 Sun … 3 Wed
   const nextWed = addDays(today, (3 - dow + 7) % 7);
   return date > nextWed;
+}
+
+/** First day (from today) with a session still to come at this cinema, if any. */
+export function nextSessionDate(p: Programme, cinemaId: string, today: string, now: number): string | undefined {
+  let best: string | undefined;
+  for (const s of p.sessions) {
+    if (s.cinemaId !== cinemaId || s.programmeDate < today || Date.parse(s.startsAt) <= now) continue;
+    if (!best || s.programmeDate < best) best = s.programmeDate;
+  }
+  return best;
 }
 
 export interface CinemaStatus { cinema: Cinema; status?: SourceStatus }
