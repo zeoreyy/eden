@@ -4,6 +4,11 @@ on:
     # 3×/day (sources: be polite). Cron is UTC: 07/13/19 in Lisbon winter, 08/14/20 in summer.
     - cron: "0 7,13,19 * * *"
   workflow_dispatch:
+    inputs:
+      only:
+        description: "Only these sources (comma-separated, e.g. uci). Others keep their last data."
+        required: false
+        default: ""
 permissions:
   contents: read
   issues: write
@@ -31,7 +36,7 @@ jobs:
           key: scraper-cache-${{ github.run_id }}
           restore-keys: scraper-cache-
       - name: Scrape → match → rate → publish to KV
-        run: npm run scrape
+        run: npm run scrape -- ${{ inputs.only != '' && format('--only {0}', inputs.only) || '' }}
         env:
           TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
           OMDB_API_KEY: ${{ secrets.OMDB_API_KEY }}
