@@ -1,5 +1,7 @@
 # Lisbon theatres — feasibility audit (26 Nov 2026)
 
+> **Outcome: not doing it** (decision #37). Kept for reference.
+
 Question (José): is adding theatre plays to eden worth it? Same problem as arthouse cinema — scattered across many small official sites — so maybe yes.
 Method: the same rules as the cinemas (official sites + their own booking systems, honest `eden-lisboa/1.0` bot, robots.txt checked, ~2–4 requests per site, 1.2 s apart). No aggregators.
 
