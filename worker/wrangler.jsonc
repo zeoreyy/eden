@@ -5,7 +5,7 @@
   "compatibility_date": "2026-11-25",
   // Free plan, served at eden.<subdomain>.workers.dev (no custom domain — decision #2).
   "workers_dev": true,
-  "preview_urls": false,
+  "preview_urls": true, // preview versions for José to review on his phone before deploying
   "assets": {
     "directory": "../web/dist",
     "binding": "ASSETS",
