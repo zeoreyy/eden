@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
-import type { Programme } from "@eden/shared";
+import type { Programme, Zone } from "@eden/shared";
+import { ZONES } from "@eden/shared";
 
 export type Load =
   | { state: "loading" }
@@ -41,9 +42,18 @@ export function useOnline(): boolean {
   );
 }
 
-// ── Router: / (week, today selected), /comercial[/<cinema>], /autor[/<cinema>]; ?dia= day, ?filme= film sheet ──
+// ── Router: / (week, today selected), /comercial[/<cinema>], /autor[/<cinema>] ──
+// ?dia= day · ?ver=cinemas · ?filme= film sheet · ?sessao= session lit in the sheet (shared link)
+// Search + filters (José: they follow you across days and tabs): ?q= · ?depois=HH:MM · ?ate=<minutes> · ?zona=
 export type Tab = "semana" | "comercial" | "autor";
-export interface Route { tab: Tab; cinemaId?: string; film?: string; day?: string; view?: "cinemas" }
+export interface Filters { q?: string; after?: string; maxMin?: number; zone?: Zone }
+export interface Route extends Filters { tab: Tab; cinemaId?: string; film?: string; day?: string; view?: "cinemas"; session?: string }
+
+/** Just the search + filter part of a route (carried over when you change tab or day). */
+export function filtersOf(r: Route): Filters {
+  return { ...(r.q ? { q: r.q } : {}), ...(r.after ? { after: r.after } : {}), ...(r.maxMin ? { maxMin: r.maxMin } : {}), ...(r.zone ? { zone: r.zone } : {}) };
+}
+export const hasFilters = (f: Filters) => !!(f.q?.trim() || f.after || f.maxMin || f.zone);
 
 export function parseRoute(loc: Location = location): Route {
   const [first, second] = loc.pathname.split("/").filter(Boolean);
@@ -52,7 +62,18 @@ export function parseRoute(loc: Location = location): Route {
   const film = q.get("filme") ?? undefined;
   const day = /^\d{4}-\d{2}-\d{2}$/.test(q.get("dia") ?? "") ? q.get("dia")! : undefined;
   const view = q.get("ver") === "cinemas" && tab !== "semana" ? ("cinemas" as const) : undefined;
-  return { tab, ...(second && (tab === "comercial" || tab === "autor") ? { cinemaId: decodeURIComponent(second) } : {}), ...(view ? { view } : {}), ...(day ? { day } : {}), ...(film ? { film } : {}) };
+  const session = film ? q.get("sessao") ?? undefined : undefined;
+  const text = q.get("q")?.slice(0, 60) || undefined;
+  const after = /^([01]\d|2[0-3]):[0-5]\d$/.test(q.get("depois") ?? "") ? q.get("depois")! : undefined;
+  const ate = Number(q.get("ate"));
+  const maxMin = Number.isInteger(ate) && ate >= 30 && ate <= 300 ? ate : undefined;
+  const zona = q.get("zona");
+  const zone = ZONES.some((z) => z.id === zona) ? (zona as Zone) : undefined;
+  return {
+    tab, ...(second && (tab === "comercial" || tab === "autor") ? { cinemaId: decodeURIComponent(second) } : {}), ...(view ? { view } : {}),
+    ...(day ? { day } : {}), ...(text ? { q: text } : {}), ...(after ? { after } : {}), ...(maxMin ? { maxMin } : {}), ...(zone ? { zone } : {}),
+    ...(film ? { film } : {}), ...(session ? { session } : {}),
+  };
 }
 
 export function routeHref(r: Route): string {
@@ -60,7 +81,12 @@ export function routeHref(r: Route): string {
   const q = new URLSearchParams();
   if (r.view) q.set("ver", r.view);
   if (r.day) q.set("dia", r.day);
+  if (r.q) q.set("q", r.q);
+  if (r.after) q.set("depois", r.after);
+  if (r.maxMin) q.set("ate", String(r.maxMin));
+  if (r.zone) q.set("zona", r.zone);
   if (r.film) q.set("filme", r.film);
+  if (r.film && r.session) q.set("sessao", r.session);
   return q.size ? `${path}?${q}` : path;
 }
 
@@ -83,5 +109,5 @@ export function useRoute(): [Route, (r: Route, opts?: { replace?: boolean }) => 
 /** Close the film sheet: back if we opened it, else drop ?filme= in place (deep link). */
 export function closeSheet(route: Route, go: (r: Route, o?: { replace?: boolean }) => void) {
   if ((history.state as { sheet?: boolean } | null)?.sheet) history.back();
-  else go({ ...route, film: undefined }, { replace: true });
+  else go({ ...route, film: undefined, session: undefined }, { replace: true });
 }

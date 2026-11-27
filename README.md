@@ -42,7 +42,7 @@ npm run deploy           # build + deploy the Worker
 - **Next week's commercial programme** appears on Thursday (NOS/UCI publish through Wednesday); the Semana tab says so.
 - **Cinemateca** publishes month by month, so early in a month the later days are empty until they post them.
 - **Ratings need a TMDB match.** Matching is deliberately strict; festival sessions, short-film programmes and live events (opera, concerts) stay unmatched and show no rating — fixes go in `data/overrides.json`.
-- **Scrape times shift with daylight saving** (GitHub cron is UTC): ~07:17/13:17/19:17 in winter, an hour later in summer. GitHub may delay scheduled runs.
+- **Scrape times shift with daylight saving** (GitHub cron is UTC): ~07:17/13:17/19:17 in winter, an hour later in summer. GitHub often starts free scheduled runs hours late (seen: 13:17 → 17:44).
 - Dark mode only for now; the cream light mode in the design brief isn't built.
 
 ## Credits

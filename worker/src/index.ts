@@ -4,6 +4,8 @@
 // Same key the scraper writes (scraper/src/publish.ts). Not exported: every export of the main module must be a handler.
 const PROGRAMME_KEY = "programme:v1";
 
+import { sharePage } from "./share.ts";
+
 const json = (body: unknown, status: number, cache = "no-store") =>
   Response.json(body, { status, headers: { "Cache-Control": cache } });
 
@@ -24,6 +26,17 @@ export default {
     }
 
     if (pathname.startsWith("/api/")) return json({ error: "not found" }, 404);
+
+    // Share links: /s/<session id> → poster preview for WhatsApp, then the app with that session lit.
+    if (pathname.startsWith("/s/")) {
+      const origin = new URL(request.url).origin;
+      const id = pathname.slice(3).split("/")[0] ?? "";
+      // ~1 MB, bounded; read as text so only the one session + film are parsed (see share.ts).
+      const text = await env.PROGRAMME.get(PROGRAMME_KEY, { type: "text", cacheTtl: 300 });
+      const html = text ? sharePage(text, id, origin) : undefined;
+      if (!html) return Response.redirect(`${origin}/`, 302); // past or unknown session: just open eden
+      return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "public, max-age=300" } });
+    }
     return env.ASSETS.fetch(request);
   },
 } satisfies ExportedHandler<Env>;

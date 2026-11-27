@@ -1,4 +1,4 @@
-import type { Cinema } from "./types.ts";
+import type { Cinema, Zone } from "./types.ts";
 
 /** The 19 cinemas. Do not add others (docs/spec.md). Venue URLs verified 24 Nov 2026. */
 const NOS_VENUE = "https://www.cinemas.nos.pt/cinemas"; // NOS has no per-cinema page (modal only)
@@ -55,4 +55,17 @@ export function cinemaRank(id: string): number {
 
 export function cinemasForSource(source: Cinema["source"]): Cinema[] {
   return CINEMAS.filter((c) => c.source === source);
+}
+
+/** "Zona" filter (José, 27 Nov 2026). Alfragide and UBBO are in Amadora; Almada, Montijo and Setúbal south of the Tejo. */
+export const ZONES: readonly { id: Zone; pt: string; en: string }[] = [
+  { id: "lisboa", pt: "Lisboa", en: "Lisbon" },
+  { id: "amadora-odivelas", pt: "Amadora e Odivelas", en: "Amadora and Odivelas" },
+  { id: "oeiras-cascais", pt: "Oeiras e Cascais", en: "Oeiras and Cascais" },
+  { id: "margem-sul", pt: "Margem Sul", en: "South bank" },
+];
+const ZONE_OF: Record<string, Zone> = { "nos-almada-forum": "margem-sul", "nos-amoreiras": "lisboa", "nos-cascaishopping": "oeiras-cascais", "nos-colombo": "lisboa", "nos-forum-montijo": "margem-sul", "nos-odivelas-strada": "amadora-odivelas", "nos-oeiras-parque": "oeiras-cascais", "nos-vasco-da-gama": "lisboa", "uci-el-corte-ingles": "lisboa", "uci-ubbo": "amadora-odivelas", "cc-alegro-alfragide": "amadora-odivelas", "cc-alegro-setubal": "margem-sul", "cc-alvalade": "lisboa", "cc-campo-pequeno": "lisboa", "cinemateca": "lisboa", "sao-jorge": "lisboa", "nimas": "lisboa", "ideal": "lisboa", "fernando-lopes": "lisboa" };
+
+export function cinemaZone(id: string): Zone {
+  return ZONE_OF[id] ?? "lisboa";
 }

@@ -4,6 +4,8 @@ export type SourceId =
   | "nos" | "uci" | "cinemacity"
   | "cinemateca" | "saojorge" | "nimas" | "ideal" | "fernandolopes";
 export type UrlKind = "session" | "film" | "venue";
+/** Area of the Lisbon metropolitan area, for the "Zona" filter. */
+export type Zone = "lisboa" | "amadora-odivelas" | "oeiras-cascais" | "margem-sul";
 
 export interface Cinema {
   id: string;

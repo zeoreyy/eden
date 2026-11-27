@@ -5,13 +5,15 @@ import { Chip, MoreChip } from "./Session.tsx";
 
 const VISIBLE = 5;
 
-export function FilmFacts({ film }: { film: Film }) {
+/** `hint`: a small "›" telling people the card opens (José: friends didn't know). */
+export function FilmFacts({ film, hint = false }: { film: Film; hint?: boolean }) {
   const { lang } = useT();
   return (
     <p className="facts">
       {film.year && <span>{film.year}</span>}
       {film.runtimeMin && <span>{film.runtimeMin} min</span>}
       {film.imdb && <span className="imdb" lang="en">IMDb <b>{film.imdb.toLocaleString(lang === "pt" ? "pt-PT" : "en-GB", { minimumFractionDigits: 1 })}</b></span>}
+      {hint && <span className="more-hint" aria-hidden="true">›</span>}
     </p>
   );
 }
@@ -35,7 +37,7 @@ export function FilmCard({ film, sessions, onOpen, eager = false, showCinema = t
         <div>
           <h3><button type="button" onClick={onOpen}>{film.title}</button></h3>
           {film.originalTitle && <p className="orig">{film.originalTitle}</p>}
-          <FilmFacts film={film} />
+          <FilmFacts film={film} hint />
         </div>
       </div>
       <div className="chips">

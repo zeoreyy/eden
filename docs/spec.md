@@ -29,7 +29,15 @@ Out of scope: Culturgest (almost no film screenings), Cinema City Beloura (not o
 | Comercial | Commercial | Toggle **Filmes \| Cinemas** (default Filmes). Filmes = Semana restricted to commercial cinemas (top picks first). Cinemas = list (centre-out; shows today's count or "próxima: qui 26") → tap one → that cinema's day as film cards, day selector |
 | Autor | Arthouse | Same for the 5 arthouse cinemas (Filmes never ranked); cycle labels matter most here |
 
-No other tabs, no "next hour" view, no extra filters.
+No other tabs, no "next hour" view.
+
+## Search and filters (José, 27 Nov 2026)
+One clean search field (PT or original title, accents ignored) above the day selector on Semana, on Comercial/Autor *Filmes* and on a cinema's page, plus three quiet pills set with an iPhone-style scroll wheel: **Depois das HH:MM** (session start), **Duração até Xh YY** (runtime) and **Zona** (Lisboa · Amadora e Odivelas · Oeiras e Cascais · Margem Sul; also on the *Cinemas* list). Search and filters follow you across days and tabs (they live in the URL). Days with results get a small dot; if the open day has none, a card points to the first day that has ("Ver seg 30 ›"). No other filters.
+
+## Share, info, first visit
+- **Share a session** from the film sheet (small share glyph on each time): "The Hunger Games · hoje 21:30 · Odivelas?" + a link `/s/<session>` whose preview shows the poster; opening it lands on that film with the session lit.
+- **Info ("i")**: what eden is, how it works (replays the tour), share eden, send feedback (email), a line on the Éden and the "Galo". No "built by" line.
+- **First visit**: a guided tour on the real app (lights up the day selector, search, a film, a time, the tabs, "i"), ending with add-to-home steps for that exact phone/browser. Once per device.
 
 ## Movie card
 Poster · title · original title (if different) · year · runtime · IMDb rating · next session times as small chips.

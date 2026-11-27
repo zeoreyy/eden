@@ -10,14 +10,16 @@ export function Ribbon() {
 }
 
 /** Day selector drawn as a balcony front: boxes separated by partitions. */
-export function DaySelector({ days, today, value, onChange }: { days: string[]; today: string; value: string; onChange: (d: string) => void }) {
+/** `marked`: days that have results for the current search — a small dot under them. */
+export function DaySelector({ days, today, value, onChange, marked }: { days: string[]; today: string; value: string; onChange: (d: string) => void; marked?: Set<string> }) {
   const { t, lang } = useT();
   return (
-    <div className="days" role="group" aria-label={t.days}>
+    <div className="days" role="group" aria-label={t.days} data-tour="days">
       {days.map((d) => (
         <button key={d} type="button" aria-pressed={d === value} onClick={() => onChange(d)}>
           <b>{d === today ? t.today : dayOfMonth(d)}</b>
           {weekdayShort(d, lang)}
+          {marked?.has(d) && <span className="day-dot"><span className="sr-only">{t.hasResults}</span></span>}
         </button>
       ))}
     </div>

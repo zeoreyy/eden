@@ -1,14 +1,15 @@
-import type { Cinema, Programme } from "@eden/shared";
+import { cinemaZone } from "@eden/shared";
+import type { Cinema, Programme, Zone } from "@eden/shared";
 import { useT } from "../lib/i18n.ts";
 import { cinemaDay, cinemasOfKind, nextSessionDate } from "../lib/programme.ts";
 import { ago, dayOfMonth, weekdayShort } from "../lib/time.ts";
 
 /** Comercial / Autor: the cinemas, each with today's remaining sessions or its data status. */
-export function CinemaList({ p, kind, today, now, onPick }: { p: Programme; kind: Cinema["kind"]; today: string; now: number; onPick: (id: string) => void }) {
+export function CinemaList({ p, kind, today, now, zone, onPick }: { p: Programme; kind: Cinema["kind"]; today: string; now: number; zone?: Zone; onPick: (id: string) => void }) {
   const { t, lang } = useT();
   return (
     <ul className="cinema-list">
-      {cinemasOfKind(kind).map((c) => {
+      {cinemasOfKind(kind).filter((c) => !zone || cinemaZone(c.id) === zone).map((c) => {
         const status = p.sources[c.source];
         const left = cinemaDay(p, c.id, today, now).length;
         const next = left ? undefined : nextSessionDate(p, c.id, today, now);

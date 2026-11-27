@@ -1,6 +1,6 @@
 /** Pure selectors over the programme JSON (no fetching here). */
-import { CINEMA_BY_ID, CINEMAS, cinemaRank } from "@eden/shared";
-import type { Cinema, Film, Programme, Session, SourceStatus } from "@eden/shared";
+import { CINEMA_BY_ID, CINEMAS, cinemaRank, cinemaZone } from "@eden/shared";
+import type { Cinema, Film, Programme, Session, SourceStatus, Zone } from "@eden/shared";
 import { addDays } from "./time.ts";
 
 export interface FilmDay { film: Film; sessions: Session[] }
@@ -11,13 +11,50 @@ export const isArthouse = (s: Session) => CINEMA_BY_ID.get(s.cinemaId)?.kind ===
  * Films showing on `date`, top picks first (in their order), then by next session time (spec).
  * When `now` is given (Hoje), past sessions are hidden and films with none left drop out.
  */
-export interface FilmFilter { cinemaId?: string; kind?: Cinema["kind"] }
+export interface FilmFilter {
+  cinemaId?: string; kind?: Cinema["kind"];
+  /** Search text: matches the PT or original title, ignoring accents and case. */
+  q?: string;
+  /** "HH:MM": sessions starting at or after (after-midnight sessions count as late that evening). */
+  after?: string;
+  /** Films of at most this many minutes. */
+  maxMin?: number;
+  zone?: Zone;
+}
 
-export function filmsOnDay(p: Programme, films: Map<string, Film>, date: string, now?: number, { cinemaId, kind }: FilmFilter = {}): FilmDay[] {
+/** "Cavalo Selvagem Nove" → "cavalo selvagem nove"; "Duna: Parte Três" → "duna parte tres". */
+export function fold(s: string): string {
+  return s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+}
+
+export function titleMatches(f: Film, q: string): boolean {
+  const k = fold(q);
+  return !k || [f.title, f.originalTitle].some((t) => !!t && fold(t).includes(k));
+}
+
+/** Minutes after the evening's midnight: 00:30 that belongs to the previous evening counts as 24:30. */
+function eveningMinutes(s: Session): number {
+  const m = Number(s.startsAt.slice(11, 13)) * 60 + Number(s.startsAt.slice(14, 16));
+  return s.startsAt.slice(0, 10) !== s.programmeDate ? m + 1440 : m;
+}
+
+function filmPasses(f: Film | undefined, { q, maxMin }: FilmFilter): boolean {
+  if (!f) return false;
+  if (q && !titleMatches(f, q)) return false;
+  if (maxMin && !(f.runtimeMin && f.runtimeMin <= maxMin)) return false; // unknown runtime: hidden while the filter is on
+  return true;
+}
+
+export function filmsOnDay(p: Programme, films: Map<string, Film>, date: string, now?: number, filter: FilmFilter = {}): FilmDay[] {
+  const { cinemaId, kind, after, zone } = filter;
+  const afterMin = after ? Number(after.slice(0, 2)) * 60 + Number(after.slice(3, 5)) : undefined;
   const byFilm = new Map<string, Session[]>();
   for (const s of p.sessions) {
     if (s.programmeDate !== date || (cinemaId && s.cinemaId !== cinemaId)) continue;
     if (kind && CINEMA_BY_ID.get(s.cinemaId)?.kind !== kind) continue;
+    if (zone && cinemaZone(s.cinemaId) !== zone) continue;
+    if (afterMin != null && eveningMinutes(s) < afterMin) continue;
+    if (!filmPasses(films.get(s.filmKey), filter)) continue;
     if (now != null && Date.parse(s.startsAt) <= now) continue;
     (byFilm.get(s.filmKey) ?? byFilm.set(s.filmKey, []).get(s.filmKey)!).push(s);
   }
@@ -71,6 +108,11 @@ export function beyondCommercialWeek(today: string, date: string): boolean {
   const dow = new Date(`${today}T12:00:00Z`).getUTCDay(); // 0 Sun … 3 Wed
   const nextWed = addDays(today, (3 - dow + 7) % 7);
   return date > nextWed;
+}
+
+/** Days (of `days`) that have at least one result for this filter — dots in the day selector. */
+export function daysWithResults(p: Programme, films: Map<string, Film>, days: string[], today: string, now: number, filter: FilmFilter): Set<string> {
+  return new Set(days.filter((d) => filmsOnDay(p, films, d, d === today ? now : undefined, filter).length > 0));
 }
 
 /** First day (from today) with a session still to come at this cinema, if any. */
