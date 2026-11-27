@@ -24,8 +24,6 @@ export function InfoSheet({ onClose, onTour }: { onClose: () => void; onTour: ()
           </button>
           <a className="btn-line" href={`mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent(t.feedbackSubject)}`}>{t.feedback}</a>
         </div>
-        <p className="info-galo">{t.galo}</p>
-        <p className="info-credits">{t.credits}</p>
       </div>
     </Sheet>
   );

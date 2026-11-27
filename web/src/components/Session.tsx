@@ -13,6 +13,15 @@ export function ShareGlyph({ size = 14 }: { size?: number }) {
   );
 }
 
+/** Tiny ↗: tapping the time opens the cinema's own booking page (José: make that visible). */
+function GoGlyph() {
+  return (
+    <svg className="go" width="9" height="9" viewBox="0 0 9 9" aria-hidden="true">
+      <path d="M2 7l5-5M3 2h4v4" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 /**
  * Session chip: time · cinema · room/label. Opens the official URL (session > film > venue).
  * In the film sheet it also gets a small share button, and the session someone shared with you is lit.
@@ -26,7 +35,7 @@ export function Chip({ s, showCinema = true, badge = false, lit = false, onShare
   const autor = badge && isArthouse(s);
   const chip = (
     <a className={lit ? "chip lit" : "chip"} href={s.url} target="_blank" rel="noopener noreferrer" data-session={s.id}>
-      <time dateTime={s.startsAt}>{hhmm(s.startsAt)}</time>
+      <span className="chip-time"><time dateTime={s.startsAt}>{hhmm(s.startsAt)}</time><GoGlyph /></span>
       {showCinema && <span className="where">{cinema?.shortName}</span>}
       <span className="what">{autor && <span className="badge">{t.badge}</span>}{detail || " "}</span>
     </a>

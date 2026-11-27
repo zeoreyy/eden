@@ -8,7 +8,7 @@ import { Sheet } from "./Sheet.tsx";
 const ITEM = 40; // px per wheel row
 
 /** One scroll-wheel column (iPhone-style): snaps to a row; tap a row or use ↑/↓. */
-function WheelColumn({ options, value, onChange, label }: { options: string[]; value: number; onChange: (i: number) => void; label: string }) {
+function WheelColumn({ options, value, onChange, label, wide = false }: { options: string[]; value: number; onChange: (i: number) => void; label: string; wide?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   // The sheet's <dialog> opens after this mounts, so wait a frame before scrolling to the current value.
@@ -19,7 +19,7 @@ function WheelColumn({ options, value, onChange, label }: { options: string[]; v
     ref.current!.scrollTo({ top: j * ITEM, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   };
   return (
-    <div className="wheel-col" ref={ref} role="listbox" aria-label={label} tabIndex={0}
+    <div className={wide ? "wheel-col wide" : "wheel-col"} ref={ref} role="listbox" aria-label={label} tabIndex={0}
       aria-activedescendant={`${label}-${value}`}
       onScroll={() => { clearTimeout(timer.current); timer.current = setTimeout(() => {
         const i = Math.round(ref.current!.scrollTop / ITEM);
@@ -72,7 +72,7 @@ function WheelSheet({ which, filters, onApply, onClose }: { which: Which; filter
           <WheelColumn label={lang === "pt" ? "minutos" : "minutes"} options={QUARTERS} value={b} onChange={setB} />
         </>}
         {which === "zone" && (
-          <WheelColumn label={t.zone} options={[t.allZones, ...ZONES.map((z) => z[lang])]} value={a} onChange={setA} />
+          <WheelColumn label={t.zone} options={[t.allZones, ...ZONES.map((z) => z[lang])]} value={a} onChange={setA} wide />
         )}
       </div>
       <div className="wheel-actions">
