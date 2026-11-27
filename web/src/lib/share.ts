@@ -30,3 +30,38 @@ export function shareSession(film: Film, s: Session, today: string, lang: Lang, 
   const cinema = CINEMA_BY_ID.get(s.cinemaId)?.shortName ?? "";
   return shareOrCopy(t.shareText(film.title, whenText(s, today, lang, t), cinema), `${location.origin}/s/${s.id}`, t.copied);
 }
+
+// ── Sharing eden itself (info sheet): message + the eden video ──────────────────────────────────────
+/** The public address (also from a preview build, people should get the real one). */
+export const APP_URL = "https://eden.zeorey.workers.dev";
+const VIDEO_URL = "/share/eden.mp4"; // 720p, ~5 MB (made from José's 40 s film with ffmpeg)
+
+let video: File | null = null;
+let loading: Promise<void> | null = null;
+
+/** Start fetching the video early (when the info sheet opens): iOS only allows share() right after the tap. */
+export function prepareShareVideo(): void {
+  if (loading || typeof navigator === "undefined" || !navigator.canShare) return;
+  const probe = new File([""], "eden.mp4", { type: "video/mp4" });
+  if (!navigator.canShare({ files: [probe] })) return; // desktop browsers: message only
+  loading = fetch(VIDEO_URL)
+    .then((r) => (r.ok ? r.blob() : Promise.reject(new Error(String(r.status)))))
+    .then((b) => { video = new File([b], "eden.mp4", { type: "video/mp4" }); })
+    .catch(() => { loading = null; });
+}
+
+/**
+ * "eden | Lisboa em cartaz — …" with the link on its own last line (WhatsApp keeps it tappable, and many
+ * apps drop the separate url field when a file is attached). Video attached when it's ready.
+ */
+export async function shareApp(t: Strings): Promise<void> {
+  const text = `${t.shareAppText}\n${APP_URL}`;
+  if (navigator.share) {
+    try {
+      if (video && navigator.canShare?.({ files: [video] })) await navigator.share({ title: "eden", text, files: [video] });
+      else await navigator.share({ title: "eden", text });
+      return;
+    } catch (e) { if ((e as Error).name === "AbortError") return; }
+  }
+  try { await navigator.clipboard.writeText(text); toast(t.copied); } catch { /* nothing we can do */ }
+}

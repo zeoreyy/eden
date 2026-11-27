@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useT } from "../lib/i18n.ts";
-import { onToast, shareOrCopy } from "../lib/share.ts";
+import { onToast, prepareShareVideo, shareApp } from "../lib/share.ts";
 import { Emblem } from "./Art.tsx";
 import { ShareGlyph } from "./Session.tsx";
 import { Sheet } from "./Sheet.tsx";
@@ -11,6 +11,7 @@ const FEEDBACK_EMAIL = "zemariaorey@gmail.com";
 /** "i" in the header → what eden is, how it works, share it, send feedback. */
 export function InfoSheet({ onClose, onTour }: { onClose: () => void; onTour: () => void }) {
   const { t } = useT();
+  useEffect(() => { prepareShareVideo(); }, []);
   return (
     <Sheet label={t.about} onClose={onClose} className="info-sheet">
       <div className="info">
@@ -19,7 +20,7 @@ export function InfoSheet({ onClose, onTour }: { onClose: () => void; onTour: ()
         <p className="info-line">{t.aboutLine}</p>
         <div className="info-actions">
           <button type="button" className="btn-line" onClick={onTour}>{t.howItWorks}</button>
-          <button type="button" className="btn-line" onClick={() => void shareOrCopy(t.shareAppText, location.origin, t.copied)}>
+          <button type="button" className="btn-line" onClick={() => void shareApp(t)}>
             <ShareGlyph size={12} /> {t.shareApp}
           </button>
           <a className="btn-line" href={`mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent(t.feedbackSubject)}`}>{t.feedback}</a>

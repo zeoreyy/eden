@@ -40,7 +40,7 @@ const dict = {
     shareText: (film: string, when: string, cinema: string) => `${film} · ${when} · ${cinema}?`,
     // info
     about: "Sobre a eden", aboutLine: "Todas as sessões de cinema de Lisboa, da semana, num só sítio. Grátis, sem anúncios.",
-    howItWorks: "Como funciona", shareApp: "Partilhar a eden", shareAppText: "eden: todas as sessões de cinema de Lisboa, num só sítio.",
+    howItWorks: "Como funciona", shareApp: "Partilhar a eden", shareAppText: "eden | Lisboa em cartaz — todas as sessões de cinema de Lisboa, num só sítio.",
     feedback: "Enviar feedback", feedbackSubject: "eden — feedback",
     galo: "Em homenagem ao Éden Teatro (1937) e ao «Galo», o cinema mais barato de Lisboa.",
     // tour
@@ -102,7 +102,7 @@ const dict = {
     shareText: (film: string, when: string, cinema: string) => `${film} · ${when} · ${cinema}?`,
     // info
     about: "About eden", aboutLine: "Every cinema session in Lisbon this week, in one place. Free, no ads.",
-    howItWorks: "How it works", shareApp: "Share eden", shareAppText: "eden: every cinema session in Lisbon, in one place.",
+    howItWorks: "How it works", shareApp: "Share eden", shareAppText: "eden | Lisbon's cinema listings — every session in town, in one place.",
     feedback: "Send feedback", feedbackSubject: "eden — feedback",
     galo: "A nod to the Éden Teatro (1937) and the “Galo”, Lisbon's cheapest cinema.",
     // tour
